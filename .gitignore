@@ -36,3 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 *.env
+scan.bat
+build/sonar/.sonar_lock
+build/sonar/report-task.txt
