@@ -18,7 +18,7 @@ public class VnPayConfig {
     public static String secretKey = "MEQKRAIMAVKTCNXFUQYDTKNHEOORRMFA";
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
-
+    private static final Random rnd = new Random(); // Declare a static Random instance
 
     public static String Sha256(String message) {
         String digest = null;
@@ -36,15 +36,15 @@ public class VnPayConfig {
         return digest;
     }
 
-    //Util for VNPAY
-    public static String hashAllFields(Map<T> fields) {
-        List fieldNames = new ArrayList(fields.keySet());
+    // Util for VNPAY
+    public static String hashAllFields(Map<String, String> fields) { // Add generic type parameters
+        List<String> fieldNames = new ArrayList<>(fields.keySet());
         Collections.sort(fieldNames);
         StringBuilder sb = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
+        Iterator<String> itr = fieldNames.iterator();
         while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = (String) fields.get(fieldName);
+            String fieldName = itr.next();
+            String fieldValue = fields.get(fieldName);
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
                 sb.append(fieldName);
                 sb.append("=");
@@ -75,12 +75,10 @@ public class VnPayConfig {
             }
             return sb.toString();
         } catch (Exception ex) {
-
             ex.printStackTrace(); // Example of logging the exception.
             throw new RuntimeException("An error occurred during HMACSHA512 calculation.", ex);
         }
     }
-
 
     public static String getIpAddress(HttpServletRequest request) {
         String ipAdress;
@@ -96,11 +94,10 @@ public class VnPayConfig {
     }
 
     public static String getRandomNumber(int len) {
-        Random rnd = new Random();
         String chars = "0123456789";
         StringBuilder sb = new StringBuilder(len);
         for (int i = 0; i < len; i++) {
-            sb.append(chars.charAt(rnd.nextInt(chars.length())));
+            sb.append(chars.charAt(rnd.nextInt(chars.length()))); // Use the static Random instance
         }
         return sb.toString();
     }
