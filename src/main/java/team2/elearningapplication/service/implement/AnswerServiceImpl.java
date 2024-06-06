@@ -190,7 +190,8 @@ public class AnswerServiceImpl implements IAnswerService {
                 return new ResponseCommon<>(ResponseCode.SUCCESS, response);
             }
         } catch (Exception e) {
-            log.error("Get answer by id failed: " + e.getMessage());
+            log.error("Get answer by id failed: {}", e.getMessage());
+
             return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete answer fail", null);
         }
     }
