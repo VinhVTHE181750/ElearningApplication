@@ -64,8 +64,8 @@ public class UserController {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
         ResponseCommon<VerifyOtpResponse> response = userService.verifyOtp(request);
-        if (response.getCode()==ResponseCode.Expired_OTP.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.Expired_OTP.getCode(),"Expried otp",null));
+        if (response.getCode()==ResponseCode.EXPIRED_OTP.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.EXPIRED_OTP.getCode(),"Expried otp",null));
         }
         else  if(response.getCode() == ResponseCode.OTP_INCORRECT.getCode()){
 
@@ -136,8 +136,8 @@ public class UserController {
         }
         VerifyOtpRequest request = new VerifyOtpRequest(forgotPasswordRequest.getOtp(), user.getEmail());
         ResponseCommon<VerifyOtpResponse> response = userService.verifyOtp(request);
-        if(response.getCode()==ResponseCode.Expired_OTP.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.Expired_OTP.getCode(),"Expried otp",null));
+        if(response.getCode()==ResponseCode.EXPIRED_OTP.getCode()){
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.EXPIRED_OTP.getCode(),"Expried otp",null));
         } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             String hassPass = passwordService.hashPassword(forgotPasswordRequest.getPassword());
             user.setPassword(hassPass);

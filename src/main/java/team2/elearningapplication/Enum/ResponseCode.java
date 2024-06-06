@@ -9,7 +9,7 @@ public enum ResponseCode {
     USER_NOT_FOUND(1000, "User not exist"),
     PASSWORD_INCORRECT(1100,"Password incorrect"),
     OTP_INCORRECT(1200,"OTP incorrect"),
-    Expired_OTP(1300,"Expired OTP"),
+    EXPIRED_OTP(1300,"Expired OTP"),
     USER_EXIST(1400,"User exist"),
     OLD_PASSWORD_INCORRECT(1500,"Old password incorrect"),
     COURSE_EXIST(1600, "Course exist"),

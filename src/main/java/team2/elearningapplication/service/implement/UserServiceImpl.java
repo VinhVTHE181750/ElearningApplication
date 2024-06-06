@@ -240,7 +240,7 @@ public class UserServiceImpl implements IUserService {
 
             if (localDateTime.isAfter(expiredOTP)) {
                 // Trường hợp OTP đã hết hạn
-                return new ResponseCommon<>(ResponseCode.Expired_OTP, null);
+                return new ResponseCommon<>(ResponseCode.EXPIRED_OTP, null);
             } else if (verifyOtpRequest.getOtp().equals(otp)) {
                 // Trường hợp OTP đúng
                 return new ResponseCommon<>(ResponseCode.SUCCESS, null);
