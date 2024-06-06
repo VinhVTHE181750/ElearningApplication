@@ -23,7 +23,7 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/course")
 @AllArgsConstructor
 public class CourseController {
-    private final int TOP_COURSE = 10;
+    private final int topCourse = 10;
     private ICourseService courseService;
     private IPaymentService paymentService;
 
@@ -117,7 +117,7 @@ public class CourseController {
 
     @GetMapping("/get-top-course")
     public ResponseEntity<ResponseCommon<GetTopCourseResponse>> getTopCourse() {
-        ResponseCommon<GetTopCourseResponse> response = courseService.getTopCourse(TOP_COURSE);
+        ResponseCommon<GetTopCourseResponse> response = courseService.getTopCourse(topCourse);
         // if response code quals empty list code -> tell user
         if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
@@ -130,7 +130,7 @@ public class CourseController {
 
     @GetMapping("/get-newest-course")
     public ResponseEntity<ResponseCommon<GetNewestCourseResponse>> getNewestCourse() {
-        ResponseCommon<GetNewestCourseResponse> response = courseService.getNewestCourse(TOP_COURSE);
+        ResponseCommon<GetNewestCourseResponse> response = courseService.getNewestCourse(topCourse);
         // if response code quals empty list code -> tell user
         if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
