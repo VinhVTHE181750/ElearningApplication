@@ -53,8 +53,6 @@ public class PaymentService implements IPaymentService {
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_Version", VnPayConfig.vnp_Version);
-//        vnp_Params.put("vnp_BankCode", "NCB");
-
 
         cld.add(Calendar.MINUTE, 15);
         String vnp_ExpireDate = formatter.format(cld.getTime());
@@ -132,7 +130,7 @@ public class PaymentService implements IPaymentService {
                         response.setCourseName(payment.getCourse().getName());
                         return response;
                     })
-                    .collect(Collectors.toList());
+                    .toList(); // Updated to Stream.toList()
             responsePayment.setListPayment(getPaymentByUserResponses);
             return new ResponseCommon<>(ResponseCode.SUCCESS, responsePayment);
         } catch (Exception e) {
@@ -155,7 +153,7 @@ public class PaymentService implements IPaymentService {
                         response.setCourseName(payment.getCourse().getName());
                         return response;
                     })
-                    .collect(Collectors.toList());
+                    .toList(); // Updated to Stream.toList()
             responsePayment.setListPayment(getPaymentByUserResponses);
             return new ResponseCommon<>(ResponseCode.SUCCESS, responsePayment);
         } catch (Exception e) {
