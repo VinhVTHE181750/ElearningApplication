@@ -12,6 +12,7 @@ public interface ICategoryService {
     ResponseCommon<DeleteCategoryResponse> deleteCategory(DeleteCategoryRequest deleteCategoryRequest);
 
     ResponseCommon<FindAllCategoryResponse> findAllCategory();
+
     ResponseCommon<GetCategoryByIdResponse> getCategoryBYId(GetCategoryByIdRequest getCategoryByIdRequest);
 
     ResponseCommon<FindAllCategoryResponse> getCategoryByDeleted(GetCategoryByDeletedRequest getCategoryByDeletedRequest);

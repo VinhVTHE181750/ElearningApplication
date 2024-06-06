@@ -20,6 +20,7 @@ public class AddAnswerRequest {
     private int questionID;
     @NotEmpty
     private List<AnswerData> listAnswer;
+
     public List<AnswerData> getListAnswer() {
         return new ArrayList<>(listAnswer);
     }

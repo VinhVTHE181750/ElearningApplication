@@ -23,11 +23,11 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements IPostService {
+    private static final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
     private final ILessonRespository lessonRespository;
     private final IUserRepository userRepository;
     private final IPostRepository postRepository;
     private final IUserService userService;
-    private static final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
 
     @Override
     public ResponseCommon<AddPostResponse> addPost(AddPostRequest addPostRequest) {
@@ -143,11 +143,10 @@ public class PostServiceImpl implements IPostService {
         try {
             Post post = postRepository.findById(getPostByIdRequest.getId()).orElse(null);
             // If post not exist -> tell user
-            if ( Objects.isNull(post) ) {
+            if (Objects.isNull(post)) {
                 log.debug("Get post by id failed: Post not exist");
                 return new ResponseCommon<>(ResponseCode.POST_NOT_EXIST, null);
-            }
-            else {
+            } else {
                 GetPostByIdResponse response = new GetPostByIdResponse();
 
                 response.setId(post.getId());
@@ -161,8 +160,7 @@ public class PostServiceImpl implements IPostService {
                 return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get post by id success", response);
 
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             log.debug("Get post by id failed: " + e.getMessage());
             return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get post by id failed", null);
@@ -173,10 +171,10 @@ public class PostServiceImpl implements IPostService {
     public ResponseCommon<GetPostByCourseIdResponse> getPostByCourseId(GetPostByCourseIdRequest getPostByCourseIdRequest) {
         try {
             GetPostByCourseIdResponse response = new GetPostByCourseIdResponse();
-            List<Post> postList = postRepository.findPostByCourseIdAndDeleted(getPostByCourseIdRequest.getCourseId(),getPostByCourseIdRequest.isDeleted());
+            List<Post> postList = postRepository.findPostByCourseIdAndDeleted(getPostByCourseIdRequest.getCourseId(), getPostByCourseIdRequest.isDeleted());
             response.setPostList(postList);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,response);
-        }catch (Exception e) {
+            return new ResponseCommon<>(ResponseCode.SUCCESS, response);
+        } catch (Exception e) {
             e.printStackTrace();
             log.debug("Get post by course id failed: " + e.getMessage());
             return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get post by course id failed", null);

@@ -6,6 +6,6 @@ import team2.elearningapplication.entity.User;
 
 import java.util.List;
 
-public interface IPaymentRepository extends JpaRepository<Payment,Integer> {
+public interface IPaymentRepository extends JpaRepository<Payment, Integer> {
     List<Payment> findPaymentByUser(User user);
 }

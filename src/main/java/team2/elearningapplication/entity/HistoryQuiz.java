@@ -17,13 +17,13 @@ public class HistoryQuiz {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
-    @Column(name="sessionId")
+    @Column(name = "sessionId")
     private int sessionId;
-    @Column(name="answerId_user")
+    @Column(name = "answerId_user")
     private int answerId;
-    @Column(name="answer_is_correct")
+    @Column(name = "answer_is_correct")
     private boolean isCorrect;
-    @Column(name="created_at")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
 }

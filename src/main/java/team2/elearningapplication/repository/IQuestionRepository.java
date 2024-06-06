@@ -18,6 +18,7 @@ public interface IQuestionRepository extends JpaRepository<Question, Integer> {
     Question findQuestionByQuizIDAndAndOrdQuestion(int quizId, int ordQuestion);
 
     List<Question> findQuestionByDeleted(boolean deleted);
+
     @Query("SELECT COUNT(q) FROM Question q WHERE q.quizID = :quizId")
     int countQuestionsByQuizId(@Param("quizId") int quizId);
 

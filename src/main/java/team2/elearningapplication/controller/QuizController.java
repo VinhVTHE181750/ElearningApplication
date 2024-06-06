@@ -114,6 +114,7 @@ public class QuizController {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get quiz by id failed", null));
         }
     }
+
     @GetMapping("/start-quiz")
     public ResponseEntity<ResponseCommon<StartQuizResponse>> startQuiz(@ParameterObject StartQuizRequest startQuizRequest) {
         ResponseCommon<StartQuizResponse> response = quizService.startQuiz(startQuizRequest);
@@ -157,6 +158,7 @@ public class QuizController {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), "Quiz finishing failed", null));
         }
     }
+
     @PostMapping("/reset-quiz")
     public ResponseEntity<ResponseCommon<ResetQuizResponse>> resetQuiz(@Valid @RequestBody ResetQuizRequest resetQuizRequest) {
         ResponseCommon<ResetQuizResponse> response = quizService.resetQuiz(resetQuizRequest);

@@ -10,5 +10,5 @@ public class GetTrackingCourseRequest {
     @NotNull
     private int courseId;
     @NotBlank
-    private  String username;
+    private String username;
 }

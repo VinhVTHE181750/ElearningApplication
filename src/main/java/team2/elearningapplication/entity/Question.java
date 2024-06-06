@@ -26,24 +26,24 @@ public class Question {
     private String questionName;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="question_type")
+    @Column(name = "question_type")
     private EnumQuestionType questionType;
 
     @OneToMany
     @JoinColumn
     private List<Answer> answerList;
-    @Column(name="ord_question")
+    @Column(name = "ord_question")
     private int ordQuestion;
     @Column(name = "quiz_id")
     private int quizID;
     @Column(name = "deleted")
     private boolean deleted;
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @ManyToOne
-    @JoinColumn (name="created_by",referencedColumnName = "id")
+    @JoinColumn(name = "created_by", referencedColumnName = "id")
     private User userCreated;
     @ManyToOne
-    @JoinColumn(name="updated_by",referencedColumnName = "id")
+    @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private User userUpdated;
 }

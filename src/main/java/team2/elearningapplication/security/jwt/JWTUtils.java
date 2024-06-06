@@ -9,8 +9,6 @@ import team2.elearningapplication.security.UserDetailsImpl;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-;
-
 @Component
 public class JWTUtils {
 

@@ -26,6 +26,6 @@ public class LessonCompleted {
     @JoinColumn
     private Course course;
 
-    @Column(name="isDone")
+    @Column(name = "isDone")
     private boolean isDone;
 }

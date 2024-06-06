@@ -38,11 +38,11 @@ import java.util.Objects;
 
 public class UserController {
 
-    private IUserService userService;
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final JWTUtils jwtUtils;
     private final PasswordService passwordService;
+    private IUserService userService;
     private IUserRepository userRepository;
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/register")
     public ResponseEntity<ResponseCommon<CreateUserResponseDTO>> createUser(@Valid @RequestBody CreateUserRequest requestDTO) {
@@ -50,11 +50,10 @@ public class UserController {
         ResponseCommon<CreateUserResponseDTO> responseDTO = userService.createUser(requestDTO);
         if (responseDTO.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(responseDTO);
-        } else if(responseDTO.getCode() == ResponseCode.USER_EXIST.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.USER_EXIST.getCode(),"Email already register account",null));
-        }
-        else {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(responseDTO.getCode(),"Resgister fail",null));
+        } else if (responseDTO.getCode() == ResponseCode.USER_EXIST.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.USER_EXIST.getCode(), "Email already register account", null));
+        } else {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(responseDTO.getCode(), "Resgister fail", null));
         }
     }
 
@@ -64,20 +63,18 @@ public class UserController {
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
         ResponseCommon<VerifyOtpResponse> response = userService.verifyOtp(request);
-        if (response.getCode()==ResponseCode.EXPIRED_OTP.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.EXPIRED_OTP.getCode(),"Expried otp",null));
-        }
-        else  if(response.getCode() == ResponseCode.OTP_INCORRECT.getCode()){
+        if (response.getCode() == ResponseCode.EXPIRED_OTP.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.EXPIRED_OTP.getCode(), "Expried otp", null));
+        } else if (response.getCode() == ResponseCode.OTP_INCORRECT.getCode()) {
 
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.OTP_INCORRECT.getCode(),"OTP incorrect",null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.OTP_INCORRECT.getCode(), "OTP incorrect", null));
 
-        } else if(response.getCode() == ResponseCode.SUCCESS.getCode()){
+        } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             user.setStatus(EnumUserStatus.ACTIVE);
             userService.updateUser(user);
             return ResponseEntity.ok(response);
-        }
-        else {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(),"verify otp fail",null));
+        } else {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), "verify otp fail", null));
         }
     }
 
@@ -106,13 +103,12 @@ public class UserController {
         ResponseCommon<JWTResponse> response = userService.login(loginRequest);
         if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
-        } else if(response.getCode()==ResponseCode.USER_NOT_FOUND.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.USER_NOT_FOUND.getCode(),"Account not register in system",null));
-        } else if(response.getCode() ==ResponseCode.PASSWORD_INCORRECT.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.PASSWORD_INCORRECT.getCode(),"Username or password incorrect",null));
-        }
-        else {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Login fail",null));
+        } else if (response.getCode() == ResponseCode.USER_NOT_FOUND.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.USER_NOT_FOUND.getCode(), "Account not register in system", null));
+        } else if (response.getCode() == ResponseCode.PASSWORD_INCORRECT.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.PASSWORD_INCORRECT.getCode(), "Username or password incorrect", null));
+        } else {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Login fail", null));
         }
     }
 
@@ -136,18 +132,16 @@ public class UserController {
         }
         VerifyOtpRequest request = new VerifyOtpRequest(forgotPasswordRequest.getOtp(), user.getEmail());
         ResponseCommon<VerifyOtpResponse> response = userService.verifyOtp(request);
-        if(response.getCode()==ResponseCode.EXPIRED_OTP.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.EXPIRED_OTP.getCode(),"Expried otp",null));
+        if (response.getCode() == ResponseCode.EXPIRED_OTP.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.EXPIRED_OTP.getCode(), "Expried otp", null));
         } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             String hassPass = passwordService.hashPassword(forgotPasswordRequest.getPassword());
             user.setPassword(hassPass);
             userService.updateUser(user);
             return ResponseEntity.ok(response);
-        }
-        else if(response.getCode() == ResponseCode.OTP_INCORRECT.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.OTP_INCORRECT.getCode(),"OTP incorrect",null));
-        }
-        else {
+        } else if (response.getCode() == ResponseCode.OTP_INCORRECT.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.OTP_INCORRECT.getCode(), "OTP incorrect", null));
+        } else {
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -162,8 +156,7 @@ public class UserController {
         System.out.println(username);
         if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
-        }
-        else {
+        } else {
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -185,6 +178,7 @@ public class UserController {
             return ResponseEntity.ok(response);
         }
     }
+
     @Operation(
             security = @SecurityRequirement(name = "bearerAuth")
     )
@@ -222,33 +216,34 @@ public class UserController {
     }
 
     @PostMapping("/log-out")
-    public ResponseEntity<ResponseCommon<LogOutResponse>> logOut(LogOutRequest logOutRequest){
+    public ResponseEntity<ResponseCommon<LogOutResponse>> logOut(LogOutRequest logOutRequest) {
         ResponseCommon<LogOutResponse> response = userService.logOut(logOutRequest);
-        if(response.getCode()==ResponseCode.FAIL.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(),"LogOut fail",null));
+        if (response.getCode() == ResponseCode.FAIL.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "LogOut fail", null));
         } else {
-            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"LogOut success",response.getData()));
+            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "LogOut success", response.getData()));
         }
     }
 
     @GetMapping("/total-user")
-    public ResponseEntity<ResponseCommon<GetTotalUserResponse>> getTotalUser(){
+    public ResponseEntity<ResponseCommon<GetTotalUserResponse>> getTotalUser() {
         ResponseCommon<GetTotalUserResponse> response = userService.getTotalUser();
-        if(response.getCode()==ResponseCode.FAIL.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Get total user  fail",null));
+        if (response.getCode() == ResponseCode.FAIL.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get total user  fail", null));
         } else {
-            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"Get total user success",response.getData()));
+            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get total user success", response.getData()));
         }
     }
+
     @GetMapping("/get-user-by-username")
-    public ResponseEntity<ResponseCommon<GetUserByUsernameResponse>> getUserByUsername(@Valid @ParameterObject GetUserByUsernameRequest getUserByUsernameRequest){
+    public ResponseEntity<ResponseCommon<GetUserByUsernameResponse>> getUserByUsername(@Valid @ParameterObject GetUserByUsernameRequest getUserByUsernameRequest) {
         ResponseCommon<GetUserByUsernameResponse> response = userService.getUserByUsername(getUserByUsernameRequest);
-        if(response.getCode() == ResponseCode.USER_NOT_FOUND.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.USER_NOT_FOUND,null));
-        } else if(response.getCode()==ResponseCode.FAIL.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL,null));
+        if (response.getCode() == ResponseCode.USER_NOT_FOUND.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.USER_NOT_FOUND, null));
+        } else if (response.getCode() == ResponseCode.FAIL.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL, null));
         } else {
-            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS,response.getData()));
+            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS, response.getData()));
         }
     }
 
@@ -262,6 +257,7 @@ public class UserController {
             return new ResponseEntity<>(new ResponseCommon<>(ResponseCode.FAIL, null), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/get-all-user")
     public ResponseEntity<ResponseCommon<GetUserResponse>> getUsers() {
         try {

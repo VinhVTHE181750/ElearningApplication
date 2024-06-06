@@ -14,8 +14,11 @@ import team2.elearningapplication.dto.response.common.GetAllBlogResponse;
 
 public interface IBlogService {
     ResponseCommon<AddBlogResponse> addBlog(AddBlogRequest addBlogRequest);
+
     ResponseCommon<UpdateBlogResponse> updateBlog(UpdateBlogRequest updateBlogRequest);
+
     ResponseCommon<DeleteBlogResponse> deleteBlog(DeleteBlogRequest deleteBlogRequest);
+
     ResponseCommon<GetAllBlogResponse> findAllBlog(GetAllBlogRequest getAllBlogRequest);
 
     ResponseCommon<GetBlogByIdResponse> findById(GetBlogByIdRequest getBlogByIdRequest);

@@ -27,6 +27,7 @@ public interface ICourseRepository extends JpaRepository<Course, Integer> {
             "ORDER BY COUNT(hrc.user_id) DESC " +
             "LIMIT :number", nativeQuery = true)
     List<Course> getTopCourses(@Param("number") int number);
+
     @Query(value = "SELECT * FROM Course ORDER BY created_at DESC LIMIT :number", nativeQuery = true)
     List<Course> getTopNewCourse(@Param("number") int number);
 
@@ -37,6 +38,7 @@ public interface ICourseRepository extends JpaRepository<Course, Integer> {
 
     @Query("SELECT COUNT(c) FROM Course c")
     int getTotalCourse();
+
     @Query("SELECT c FROM Course c " +
             "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(c.category.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")

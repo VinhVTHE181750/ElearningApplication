@@ -1,5 +1,3 @@
-
-
 package team2.elearningapplication.entity;
 
 import lombok.AllArgsConstructor;
@@ -27,21 +25,21 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @JoinColumn(name="course_id")
+    @JoinColumn(name = "course_id")
     private int courseId;
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "created_at",columnDefinition = "TIMESTAMP")
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
 
     @Column(name = "deleted")
     private boolean deleted;
     @ManyToOne
-    @JoinColumn (name="created_by",referencedColumnName = "id")
+    @JoinColumn(name = "created_by", referencedColumnName = "id")
     private User userCreated;
     @ManyToOne
-    @JoinColumn(name="updated_by",referencedColumnName = "id")
+    @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private User userUpdated;
 }

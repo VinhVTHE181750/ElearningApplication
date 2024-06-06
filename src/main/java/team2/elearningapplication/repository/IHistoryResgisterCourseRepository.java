@@ -9,8 +9,8 @@ import team2.elearningapplication.entity.User;
 
 import java.util.Optional;
 
-public interface IHistoryResgisterCourseRepository extends JpaRepository<HistoryRegisterCourse,Integer> {
+public interface IHistoryResgisterCourseRepository extends JpaRepository<HistoryRegisterCourse, Integer> {
     @Query("SELECT hrc FROM HistoryRegisterCourse hrc WHERE hrc.course = :course AND hrc.user = :user")
-    Optional<HistoryRegisterCourse> findHistoryRegisterCourseByCourseIdAndUser(@Param("course")Course course, @Param("user") User user);
+    Optional<HistoryRegisterCourse> findHistoryRegisterCourseByCourseIdAndUser(@Param("course") Course course, @Param("user") User user);
 
 }

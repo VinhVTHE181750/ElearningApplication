@@ -5,7 +5,7 @@ import team2.elearningapplication.entity.Order;
 
 import java.util.Optional;
 
-public interface OrderRepository extends JpaRepository<Order,Integer> {
+public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     Optional<Order> getOrderById(int id);
 }

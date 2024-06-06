@@ -45,12 +45,12 @@ public class UserServiceImpl implements IUserService {
     public ResponseCommon<GetUserByUsernameResponse> getUserByUsername(GetUserByUsernameRequest getUserByUsernameRequest) {
         try {
             User user = userRepository.findByUsername(getUserByUsernameRequest.getUsername()).orElse(null);
-            if(Objects.isNull(user)){
-                return new ResponseCommon<>(ResponseCode.USER_EXIST,null);
+            if (Objects.isNull(user)) {
+                return new ResponseCommon<>(ResponseCode.USER_EXIST, null);
             } else {
                 GetUserByUsernameResponse getUserByUsernameResponse = new GetUserByUsernameResponse();
                 getUserByUsernameResponse.setUser(user);
-                return new ResponseCommon<>(ResponseCode.SUCCESS,getUserByUsernameResponse);
+                return new ResponseCommon<>(ResponseCode.SUCCESS, getUserByUsernameResponse);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,7 +67,7 @@ public class UserServiceImpl implements IUserService {
             int digit = random.nextInt(10); // Số ngẫu nhiên từ 0 đến 9
             randomNumber.append(digit);
         }
-        String result = username + randomNumber.toString();
+        String result = username + randomNumber;
         return result;
     }
 
@@ -77,12 +77,12 @@ public class UserServiceImpl implements IUserService {
             User user = userRepository.findByEmail(requestDTO.getEmail()).orElse(null);
             // if username exist and status equals inprocess -> get new otp
 //            log.debug("check user get by username and status{}",requestDTO.getUsername(),user.getStatus());
-            if(Objects.nonNull(user) && user.getStatus() != EnumUserStatus.IN_PROCESS){
-                return new ResponseCommon<>(ResponseCode.USER_EXIST,null);
+            if (Objects.nonNull(user) && user.getStatus() != EnumUserStatus.IN_PROCESS) {
+                return new ResponseCommon<>(ResponseCode.USER_EXIST, null);
             }
             // if user is null -> new user
-            log.debug("check user is null{}",user);
-            if(Objects.isNull(user)){
+            log.debug("check user is null{}", user);
+            if (Objects.isNull(user)) {
                 user = new User();
             }
             user.setUsername(genUserFromEmail(requestDTO.getEmail()));
@@ -97,13 +97,13 @@ public class UserServiceImpl implements IUserService {
             LocalDateTime localDateTime = LocalDateTime.now();
             LocalDateTime expired = localDateTime.plusMinutes(Long.valueOf(otpValid));
             user.setStatus(EnumUserStatus.IN_PROCESS);
-            log.debug("Value of expired{}",expired);
+            log.debug("Value of expired{}", expired);
             user.setExpiredOTP(expired);
             user.setCreatedAt(LocalDateTime.now());
             user.setOtp(CommonUtils.getOTP());
             User createdUser = userRepository.save(user);
             log.info("START... Sending email");
-            emailService.sendEmail(setUpMail(user.getEmail(),user.getOtp()));
+            emailService.sendEmail(setUpMail(user.getEmail(), user.getOtp()));
             log.info("END... Email sent success");
             CreateUserResponseDTO responseDTO = new CreateUserResponseDTO();
             responseDTO.setUsername(createdUser.getUsername());
@@ -147,7 +147,7 @@ public class UserServiceImpl implements IUserService {
                 updatedUser.setUpdatedAt(LocalDateTime.now());
                 return userRepository.save(updatedUser);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -165,7 +165,7 @@ public class UserServiceImpl implements IUserService {
             User user = userRepository.findByEmailAndStatus(request.getEmail(), EnumUserStatus.ACTIVE).orElse(null);
             // if  user is null ->throw error
             if (Objects.isNull(user)) {
-                return new ResponseCommon<>(ResponseCode.USER_NOT_FOUND,null);
+                return new ResponseCommon<>(ResponseCode.USER_NOT_FOUND, null);
             }
             // step1: gen otp
             // if otp of user expried
@@ -173,14 +173,14 @@ public class UserServiceImpl implements IUserService {
             String otp = CommonUtils.getOTP();
             //step2: send email
             log.info("START... Sending email");
-            emailService.sendEmail(setUpMail(user.getEmail(),otp));
+            emailService.sendEmail(setUpMail(user.getEmail(), otp));
             log.info("END... Email sent success");
 //            user.setUsername(genUserFromEmail(request.getEmail()));
             if (request.isCreate()) {
                 user.setStatus(EnumUserStatus.IN_PROCESS);
             }
             LocalDateTime expired = localDateTime.plusMinutes(Long.valueOf(otpValid));
-            log.debug("Value of expired{}",expired);
+            log.debug("Value of expired{}", expired);
             user.setExpiredOTP(expired);
             user.setOtp(otp);
             User createdUser = userRepository.save(user);
@@ -198,8 +198,8 @@ public class UserServiceImpl implements IUserService {
         try {
             Optional<User> user = userRepository.findByEmail(loginRequest.getUsername());
             // if username request not found in database -> tell user
-            if(user.isEmpty()){
-                return new ResponseCommon<>(ResponseCode.USER_NOT_FOUND,null);
+            if (user.isEmpty()) {
+                return new ResponseCommon<>(ResponseCode.USER_NOT_FOUND, null);
             } // else -> check password
             else {
                 String hashPass = passwordService.hashPassword(loginRequest.getPassword());
@@ -218,12 +218,11 @@ public class UserServiceImpl implements IUserService {
 //
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseCommon<>(ResponseCode.FAIL, null);
         }
     }
-
 
 
     @Override
@@ -256,7 +255,6 @@ public class UserServiceImpl implements IUserService {
     }
 
 
-
     @Override
     public ResponseCommon<ChangePasswordResponse> changePassword(ChangePasswordRequest changePasswordRequest) {
         try {
@@ -264,21 +262,21 @@ public class UserServiceImpl implements IUserService {
             System.out.println(username);
             User user = userRepository.findByUsername(username).orElse(null);
             // if user is null -> tell error
-            log.debug("change passsword with username{}",username);
-            if(Objects.isNull(user)){
-                return new ResponseCommon<>(ResponseCode.USER_NOT_FOUND,null);
+            log.debug("change passsword with username{}", username);
+            if (Objects.isNull(user)) {
+                return new ResponseCommon<>(ResponseCode.USER_NOT_FOUND, null);
             } else {
                 String hassPass = passwordService.hashPassword(changePasswordRequest.getNewPassword());
                 // if oldPassword not correct -> tell user
-                if(!passwordService.hashPassword(changePasswordRequest.getOldPassword()).equals(user.getPassword())){
-                    return new ResponseCommon<>(ResponseCode.PASSWORD_INCORRECT,null);
+                if (!passwordService.hashPassword(changePasswordRequest.getOldPassword()).equals(user.getPassword())) {
+                    return new ResponseCommon<>(ResponseCode.PASSWORD_INCORRECT, null);
                 } else {
                     user.setPassword(hassPass);
                     userRepository.save(user);
-                    return new ResponseCommon<>(ResponseCode.SUCCESS,null);
+                    return new ResponseCommon<>(ResponseCode.SUCCESS, null);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseCommon<>(new ChangePasswordResponse("Error"));
         }
@@ -318,11 +316,10 @@ public class UserServiceImpl implements IUserService {
         try {
             User user = userRepository.findByEmail(getUserByEmailRequest.getEmail()).orElse(null);
             // If user in database not exist -> tell user
-            if ( Objects.isNull(user) ) {
+            if (Objects.isNull(user)) {
                 log.debug("User not exist");
-                return new ResponseCommon<>(ResponseCode.USER_NOT_FOUND.getCode(),"User not exist",null);
-            }
-            else {
+                return new ResponseCommon<>(ResponseCode.USER_NOT_FOUND.getCode(), "User not exist", null);
+            } else {
                 GetUserByEmailResponse response = new GetUserByEmailResponse();
 
                 response.setId(user.getId());
@@ -339,11 +336,10 @@ public class UserServiceImpl implements IUserService {
                 log.debug("Get user by email successfully");
                 return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get user by email success", response);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             log.error("Get user by email failed");
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Get user by email failed",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get user by email failed", null);
         }
     }
 
@@ -351,17 +347,17 @@ public class UserServiceImpl implements IUserService {
     public ResponseCommon<LogOutResponse> logOut(LogOutRequest logOutRequest) {
         try {
             User user = userRepository.findByUsername(logOutRequest.getUsername()).orElse(null);
-            if(!Objects.isNull(user)){
+            if (!Objects.isNull(user)) {
                 user.setSession_id(null);
                 userRepository.save(user);
                 return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Logout successful", null);
             } else {
                 return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Logout failed", null);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             log.error("Log out failed");
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Log out failed",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Log out failed", null);
         }
     }
 
@@ -370,11 +366,11 @@ public class UserServiceImpl implements IUserService {
         try {
             int totalUser = userRepository.getTotalUser();
             GetTotalUserResponse getTotalUserResponse = new GetTotalUserResponse(totalUser);
-            return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"Get total user success",getTotalUserResponse);
+            return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get total user success", getTotalUserResponse);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Get total user failed");
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Get total user failed",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get total user failed", null);
         }
     }
 
@@ -386,12 +382,12 @@ public class UserServiceImpl implements IUserService {
             String otp = CommonUtils.getOTP();
             //step2: send email
             log.info("START... Sending email");
-            emailService.sendEmail(setUpMail(user.getEmail(),otp));
+            emailService.sendEmail(setUpMail(user.getEmail(), otp));
             log.info("END... Email sent success");
             user.setUsername(genUserFromEmail(request.getEmail()));
 
             LocalDateTime expired = localDateTime.plusMinutes(Long.valueOf(otpValid));
-            log.debug("Value of expired{}",expired);
+            log.debug("Value of expired{}", expired);
             user.setExpiredOTP(expired);
             user.setOtp(otp);
             userRepository.save(user);
@@ -411,8 +407,8 @@ public class UserServiceImpl implements IUserService {
             SetRoleUserResponse setRoleUserResponse = new SetRoleUserResponse();
             setRoleUserResponse.setUsername(user.getUsername());
             setRoleUserResponse.setTypeRole(user.getRole());
-            return new ResponseCommon<>(ResponseCode.SUCCESS,setRoleUserResponse);
-        }catch (Exception e) {
+            return new ResponseCommon<>(ResponseCode.SUCCESS, setRoleUserResponse);
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseCommon<>(ResponseCode.FAIL, null);
         }
@@ -424,7 +420,7 @@ public class UserServiceImpl implements IUserService {
             List<User> users = userRepository.findAll();
             GetUserResponse getUserResponse = new GetUserResponse();
             getUserResponse.setUserList(users);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,getUserResponse);
+            return new ResponseCommon<>(ResponseCode.SUCCESS, getUserResponse);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseCommon<>(ResponseCode.FAIL, null);

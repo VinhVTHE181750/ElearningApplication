@@ -23,16 +23,15 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class QuizServiceImpl implements IQuizService {
+    private static final double BASE_MARK = 0.8;
     private final IQuizRepository quizRepository;
     private final ILessonRespository lessonRespository;
-    private  final IQuestionRepository questionRepository;
+    private final IQuestionRepository questionRepository;
     private final IAnswerRepository answerRepository;
     private final IUserRepository userRepository;
     private final EmailService emailService;
     private final ICourseRepository courseRepository;
     private final IHistoryQuizRepository historyQuizRepository;
-    private static final double BASE_MARK = 0.8;
-
     private final Logger log = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
     @Override
@@ -42,7 +41,8 @@ public class QuizServiceImpl implements IQuizService {
             User user = userRepository.findByUsername(addQuizRequest.getUsername()).orElse(null);
 
             // if quiz not null -> tell user
-            if(!Objects.isNull(quiz)) return new ResponseCommon<>(ResponseCode.QUIZ_EXIST.getCode(),"Quiz already exist",null);
+            if (!Objects.isNull(quiz))
+                return new ResponseCommon<>(ResponseCode.QUIZ_EXIST.getCode(), "Quiz already exist", null);
             else {
                 Quiz quizAdd = new Quiz();
                 quizAdd.setLesson(lessonRespository.findLessonById(addQuizRequest.getLessonID()).orElse(null));
@@ -53,11 +53,11 @@ public class QuizServiceImpl implements IQuizService {
                 addQuizResponse.setLessonName(quizAdd.getName());
                 addQuizResponse.setQuizID(quizAdd.getId());
                 addQuizResponse.setLessonID(quizAdd.getLesson().getId());
-                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"Add Quiz success",addQuizResponse);
+                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Add Quiz success", addQuizResponse);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Add Quiz fail",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add Quiz fail", null);
         }
     }
 
@@ -67,7 +67,8 @@ public class QuizServiceImpl implements IQuizService {
             Quiz quiz = quizRepository.findQuizById(updateQuizRequest.getQuizID()).orElse(null);
             User user = userRepository.findByUsername(updateQuizRequest.getUsername()).orElse(null);
             // if quiz is null -> tell user
-            if(Objects.isNull(quiz)) return  new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(),"Quiz not exist",null);
+            if (Objects.isNull(quiz))
+                return new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(), "Quiz not exist", null);
             else {
                 quiz.setName(updateQuizRequest.getQuizName());
                 quiz.setLesson(lessonRespository.findLessonById(updateQuizRequest.getLessonID()).orElse(null));
@@ -80,11 +81,11 @@ public class QuizServiceImpl implements IQuizService {
                 updateQuizResponse.setLessonID(quiz.getLesson().getId());
                 updateQuizResponse.setLessonName(quiz.getLesson().getName());
                 updateQuizResponse.setQuizName(quiz.getName());
-                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"Update quiz success",updateQuizResponse);
+                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Update quiz success", updateQuizResponse);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Update quiz fail",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update quiz fail", null);
         }
 
     }
@@ -95,8 +96,8 @@ public class QuizServiceImpl implements IQuizService {
             Quiz quiz = quizRepository.findQuizById(deleteQuizRequest.getQuizID()).orElse(null);
             User user = userRepository.findByUsername(deleteQuizRequest.getUsername()).orElse(null);
             // if quiz is null -> tell user
-            if(Objects.isNull(quiz))
-                return  new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(),"Quiz not exist",null);
+            if (Objects.isNull(quiz))
+                return new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(), "Quiz not exist", null);
             else {
                 quiz.setDeleted(true);
                 quiz.setUpdatedAt(LocalDateTime.now());
@@ -108,11 +109,11 @@ public class QuizServiceImpl implements IQuizService {
                 deleteQuizResponse.setLessonID(quiz.getLesson().getId());
                 deleteQuizResponse.setLessonName(quiz.getLesson().getName());
                 deleteQuizResponse.setQuizName(quiz.getName());
-                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"Delete quiz success",deleteQuizResponse);
+                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Delete quiz success", deleteQuizResponse);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Delete quiz fail",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete quiz fail", null);
         }
     }
 
@@ -120,15 +121,16 @@ public class QuizServiceImpl implements IQuizService {
     public ResponseCommon<FindAllQuizResponse> findAllQuiz() {
         try {
             List<Quiz> quizList = quizRepository.findAllByIsDeleted(false);
-            if(quizList.isEmpty()) return new ResponseCommon<>(ResponseCode.QUIZ_LIST_IS_EMPTY.getCode(),"Quiz list is empty",null);
+            if (quizList.isEmpty())
+                return new ResponseCommon<>(ResponseCode.QUIZ_LIST_IS_EMPTY.getCode(), "Quiz list is empty", null);
             else {
                 FindAllQuizResponse findAllQuizResponse = new FindAllQuizResponse();
                 findAllQuizResponse.setQuizList(quizList);
-                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"Find all quiz success",findAllQuizResponse);
+                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Find all quiz success", findAllQuizResponse);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Find all quiz fail",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Find all quiz fail", null);
         }
     }
 
@@ -136,15 +138,16 @@ public class QuizServiceImpl implements IQuizService {
     public ResponseCommon<FindAllQuizResponse> findAllQuizByDeleted(FindQuizByDeletedRequest findQuizByDeletedRequest) {
         try {
             List<Quiz> quizList = quizRepository.findAllByIsDeleted(findQuizByDeletedRequest.isDeleted());
-            if(quizList.isEmpty()) return new ResponseCommon<>(ResponseCode.QUIZ_LIST_IS_EMPTY.getCode(),"Quiz list is empty",null);
+            if (quizList.isEmpty())
+                return new ResponseCommon<>(ResponseCode.QUIZ_LIST_IS_EMPTY.getCode(), "Quiz list is empty", null);
             else {
                 FindAllQuizResponse findAllQuizResponse = new FindAllQuizResponse();
                 findAllQuizResponse.setQuizList(quizList);
-                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"Find all quiz success",findAllQuizResponse);
+                return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Find all quiz success", findAllQuizResponse);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Find all quiz fail",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Find all quiz fail", null);
         }
     }
 
@@ -153,11 +156,10 @@ public class QuizServiceImpl implements IQuizService {
         try {
             Quiz quiz = quizRepository.findQuizById(getQuizByIdRequest.getId()).orElse(null);
             // If quiz not exist -> tell user
-            if ( Objects.isNull(quiz) ) {
+            if (Objects.isNull(quiz)) {
                 log.debug("Quiz not exist");
-                return  new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(),"Quiz not exist",null);
-            }
-            else {
+                return new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(), "Quiz not exist", null);
+            } else {
                 GetQuizByIdResponse response = new GetQuizByIdResponse();
 
                 response.setId(quiz.getId());
@@ -169,29 +171,28 @@ public class QuizServiceImpl implements IQuizService {
                 log.debug("Get quiz by id successfully");
                 return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get quiz by id success", response);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             log.error("Get quiz by id failed");
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Get quiz by id failed",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get quiz by id failed", null);
         }
     }
 
     @Override
     public ResponseCommon<StartQuizResponse> startQuiz(StartQuizRequest startQuizRequest) {
         try {
-            Question question = questionRepository.findQuestionByQuizIDAndAndOrdQuestion(startQuizRequest.getQuizId(),1);
+            Question question = questionRepository.findQuestionByQuizIDAndAndOrdQuestion(startQuizRequest.getQuizId(), 1);
             int sessionId = CommonUtils.getSessionID();
             int totalQuestion = questionRepository.countQuestionsByQuizId(startQuizRequest.getQuizId());
             StartQuizResponse startQuizResponse = new StartQuizResponse();
             startQuizResponse.setQuestion(question);
             startQuizResponse.setSessionId(sessionId);
             startQuizResponse.setTotalQuestion(totalQuestion);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,startQuizResponse);
-        }catch (Exception e) {
+            return new ResponseCommon<>(ResponseCode.SUCCESS, startQuizResponse);
+        } catch (Exception e) {
             e.printStackTrace();
             log.error("start  quiz by id failed");
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"start quiz by id failed",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "start quiz by id failed", null);
         }
     }
 
@@ -263,7 +264,7 @@ public class QuizServiceImpl implements IQuizService {
             for (int i = 0; i < answerByUser.size(); i++) {
                 boolean isCorrect = answerRepository.checkIsCorrect(answerByUser.get(i));
                 log.debug("isCorrect: " + isCorrect);
-                if(isCorrect){
+                if (isCorrect) {
                     totalCorrect++;
                     historyQuiz.setUser(user);
                     historyQuiz.setSessionId(finishQuizRequest.getSessionId());
@@ -291,11 +292,11 @@ public class QuizServiceImpl implements IQuizService {
             finishQuizResponse.setTotalCorrect(totalCorrect);
             finishQuizResponse.setTotalInCorrect(totalIncorrect);
             finishQuizResponse.setPercent(mark);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,finishQuizResponse);
+            return new ResponseCommon<>(ResponseCode.SUCCESS, finishQuizResponse);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("finish quiz  failed");
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"finish quiz  failed",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "finish quiz  failed", null);
         }
     }
 
@@ -320,11 +321,11 @@ public class QuizServiceImpl implements IQuizService {
             int newSessionId = CommonUtils.getSessionID();
             ResetQuizResponse resetQuizResponse = new ResetQuizResponse();
             resetQuizResponse.setNewSessionId(newSessionId);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,resetQuizResponse);
-        }catch (Exception e) {
+            return new ResponseCommon<>(ResponseCode.SUCCESS, resetQuizResponse);
+        } catch (Exception e) {
             e.printStackTrace();
             log.error("reset quiz  failed");
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"reset quiz  failed",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "reset quiz  failed", null);
         }
     }
 
@@ -346,11 +347,11 @@ public class QuizServiceImpl implements IQuizService {
             }
             GetAllSessionQuizByUserResponse response = new GetAllSessionQuizByUserResponse();
             response.setListQuiz(historyQuizUsers);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,response);
+            return new ResponseCommon<>(ResponseCode.SUCCESS, response);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("get all session quiz  failed");
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"get all session quiz  failed",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "get all session quiz  failed", null);
         }
     }
 
@@ -373,11 +374,11 @@ public class QuizServiceImpl implements IQuizService {
             }
             GetCorrectAnswerBySessionId response = new GetCorrectAnswerBySessionId();
             response.setAnswerList(answerListCorrect);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,response);
-        }catch (Exception e) {
+            return new ResponseCommon<>(ResponseCode.SUCCESS, response);
+        } catch (Exception e) {
             e.printStackTrace();
             log.error("get correct answer by  session quiz  failed");
-            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"get correct answer  session quiz  failed",null);
+            return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "get correct answer  session quiz  failed", null);
         }
     }
 }

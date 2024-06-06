@@ -492,6 +492,7 @@ public class CourseServiceImpl implements ICourseService {
         log.info("END... Email sent success");
         return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Confirm success", null);
     }
+
     private Mail setUpMailPayment(String mailTo, String fullname, String courseName, double amount, String transactionId, LocalDateTime createdAt) {
         Mail mail = new Mail();
         mail.setFrom("elearningapplicationsystem@gmail.com");
@@ -534,11 +535,7 @@ public class CourseServiceImpl implements ICourseService {
             User user = userRepository.findByUsername(checkEnrollCourseRequest.getUsername()).orElse(null);
             Course course = courseRepository.findCourseById(checkEnrollCourseRequest.getCourseId()).orElse(null);
             HistoryRegisterCourse historyRegisterCourse = historyRegisterCourseRepository.findHistoryRegisterCourseByCourseIdAndUser(course, user).orElse(null);
-            if (Objects.isNull(historyRegisterCourse)) {
-                checkEnrollCourseResponse.setEnrollCourse(false);
-            } else {
-                checkEnrollCourseResponse.setEnrollCourse(true);
-            }
+            checkEnrollCourseResponse.setEnrollCourse(!Objects.isNull(historyRegisterCourse));
             return new ResponseCommon<>(ResponseCode.SUCCESS, checkEnrollCourseResponse);
         } catch (Exception e) {
             e.printStackTrace();

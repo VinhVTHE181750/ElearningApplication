@@ -252,7 +252,7 @@ public class QuestionServiceImpl implements IQuestionService {
             List<Question> questions = questionRepository.getQuestionByQuizID(getQuestionByQuizIDRequest.getQuizId());
             GetQuestionByQuizIdResponse getQuestionByQuizIdResponse = new GetQuestionByQuizIdResponse();
             getQuestionByQuizIdResponse.setQuestionList(questions);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,getQuestionByQuizIdResponse);
+            return new ResponseCommon<>(ResponseCode.SUCCESS, getQuestionByQuizIdResponse);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("Get question by id An error occurred - " + e.getMessage(), e);

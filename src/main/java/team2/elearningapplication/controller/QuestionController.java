@@ -121,19 +121,20 @@ public class QuestionController {
     }
 
     @GetMapping("/get-question-page")
-    public  ResponseEntity<ResponseCommon<GetQuestionPageResponse>> getQuestionPage(PageRequestDTO pageRequestDTO){
+    public ResponseEntity<ResponseCommon<GetQuestionPageResponse>> getQuestionPage(PageRequestDTO pageRequestDTO) {
         ResponseCommon<GetQuestionPageResponse> response = questionService.getQuestionPage(pageRequestDTO);
         // if response code quals empty list code -> tell user
-        if(response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.QUESTION_LIST_IS_EMPTY.getCode(),"Question list is empty",null));
-        } else if(response.getCode() == ResponseCode.SUCCESS.getCode()){
-            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"get question page success",response.getData()));
+        if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.QUESTION_LIST_IS_EMPTY.getCode(), "Question list is empty", null));
+        } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
+            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "get question page success", response.getData()));
         } else {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(),"get question pagefail",null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "get question pagefail", null));
         }
     }
+
     @GetMapping("/get-questions-by-quiz-id")
-    public ResponseEntity<ResponseCommon<GetQuestionByQuizIdResponse>>getQuestionsByQuizId(GetQuestionByQuizIDRequest getQuestionByQuizIDRequest) {
+    public ResponseEntity<ResponseCommon<GetQuestionByQuizIdResponse>> getQuestionsByQuizId(GetQuestionByQuizIDRequest getQuestionByQuizIDRequest) {
         try {
             ResponseCommon<GetQuestionByQuizIdResponse> response = questionService.getQuestionByQuizId(getQuestionByQuizIDRequest);
 

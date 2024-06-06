@@ -6,9 +6,10 @@ import team2.elearningapplication.entity.Category;
 import java.util.List;
 import java.util.Optional;
 
-public interface ICategoryRepository extends JpaRepository<Category,Integer> {
+public interface ICategoryRepository extends JpaRepository<Category, Integer> {
     Optional<Category> findCategoryByName(String name);
 
     Optional<Category> findCategoryById(int id);
+
     List<Category> findAllByIsDeleted(boolean isDeleted);
 }

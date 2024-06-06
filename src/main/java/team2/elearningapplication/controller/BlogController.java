@@ -27,9 +27,9 @@ public class BlogController {
     private IBlogService blogService;
 
     @PostMapping("/add-blog")
-    public ResponseEntity<ResponseCommon<AddBlogResponse>> addBlog(@Valid @RequestBody AddBlogRequest addBlogRequest){
+    public ResponseEntity<ResponseCommon<AddBlogResponse>> addBlog(@Valid @RequestBody AddBlogRequest addBlogRequest) {
         ResponseCommon<AddBlogResponse> response = blogService.addBlog(addBlogRequest);
-        if(response.getCode() == ResponseCode.SUCCESS.getCode()){
+        if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add Blog failed", null));
@@ -37,11 +37,11 @@ public class BlogController {
     }
 
     @PostMapping("/update-blog")
-    public ResponseEntity<ResponseCommon<UpdateBlogResponse>> updateBlog(@Valid @RequestBody UpdateBlogRequest updateBlogRequest){
+    public ResponseEntity<ResponseCommon<UpdateBlogResponse>> updateBlog(@Valid @RequestBody UpdateBlogRequest updateBlogRequest) {
         ResponseCommon<UpdateBlogResponse> response = blogService.updateBlog(updateBlogRequest);
-        if(response.getCode() == ResponseCode.SUCCESS.getCode()){
+        if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
-        } else if(response.getCode() == ResponseCode.BLOG_NOT_EXIST.getCode()){
+        } else if (response.getCode() == ResponseCode.BLOG_NOT_EXIST.getCode()) {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.BLOG_NOT_EXIST.getCode(), "Blog not exist", null));
         } else {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update Blog failed", null));
@@ -49,11 +49,11 @@ public class BlogController {
     }
 
     @PutMapping("/delete-blog")
-    public ResponseEntity<ResponseCommon<DeleteBlogResponse>> deleteBlog(@Valid @RequestBody DeleteBlogRequest deleteBlogRequest){
+    public ResponseEntity<ResponseCommon<DeleteBlogResponse>> deleteBlog(@Valid @RequestBody DeleteBlogRequest deleteBlogRequest) {
         ResponseCommon<DeleteBlogResponse> response = blogService.deleteBlog(deleteBlogRequest);
-        if(response.getCode() == ResponseCode.SUCCESS.getCode()){
+        if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
-        } else if(response.getCode() == ResponseCode.BLOG_NOT_EXIST.getCode()){
+        } else if (response.getCode() == ResponseCode.BLOG_NOT_EXIST.getCode()) {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.BLOG_NOT_EXIST.getCode(), "Blog not exist", null));
         } else {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete Blog failed", null));
@@ -61,11 +61,11 @@ public class BlogController {
     }
 
     @GetMapping("/find-all-blog")
-    public ResponseEntity<ResponseCommon<GetAllBlogResponse>> findAllBlog(@ParameterObject GetAllBlogRequest getAllBlogRequest){
+    public ResponseEntity<ResponseCommon<GetAllBlogResponse>> findAllBlog(@ParameterObject GetAllBlogRequest getAllBlogRequest) {
         ResponseCommon<GetAllBlogResponse> response = blogService.findAllBlog(getAllBlogRequest);
-        if(response.getCode() == ResponseCode.SUCCESS.getCode()){
+        if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
-        } else if(response.getCode() == ResponseCode.BLOG_LIST_IS_EMPTY.getCode()){
+        } else if (response.getCode() == ResponseCode.BLOG_LIST_IS_EMPTY.getCode()) {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.BLOG_LIST_IS_EMPTY.getCode(), "List Blog is Empty", null));
         } else {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Find All Blog failed", null));
@@ -73,11 +73,11 @@ public class BlogController {
     }
 
     @GetMapping("/get-blog-by-id")
-    public ResponseEntity<ResponseCommon<GetBlogByIdResponse>> getBlogById(@ParameterObject GetBlogByIdRequest request){
+    public ResponseEntity<ResponseCommon<GetBlogByIdResponse>> getBlogById(@ParameterObject GetBlogByIdRequest request) {
         ResponseCommon<GetBlogByIdResponse> response = blogService.findById(request);
-        if(response.getCode() == ResponseCode.SUCCESS.getCode()){
+        if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
-        } else if(response.getCode() == ResponseCode.BLOG_NOT_EXIST.getCode()){
+        } else if (response.getCode() == ResponseCode.BLOG_NOT_EXIST.getCode()) {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.BLOG_NOT_EXIST.getCode(), "Blog not exist", null));
         } else {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get Blog by ID failed", null));

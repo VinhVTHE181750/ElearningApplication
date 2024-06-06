@@ -311,7 +311,7 @@ public class LessonServiceImpl implements ILessonService {
             lessonCompletedRespository.save(completed);
             response.setDone(true);
             response.setMessage("Done make lesson completed2");
-            return new ResponseCommon<>(ResponseCode.SUCCESS,response);
+            return new ResponseCommon<>(ResponseCode.SUCCESS, response);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("make lesson completed An error occurred - " + e.getMessage(), e);
@@ -329,8 +329,8 @@ public class LessonServiceImpl implements ILessonService {
             GetTrackingCourse getTrackingCourse = new GetTrackingCourse();
             getTrackingCourse.setLessonCompleted(totalCompleted);
             getTrackingCourse.setTotalLesson(totalLesson);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,getTrackingCourse);
-        }catch (Exception e) {
+            return new ResponseCommon<>(ResponseCode.SUCCESS, getTrackingCourse);
+        } catch (Exception e) {
             e.printStackTrace();
             log.error("tracking course An error occurred - " + e.getMessage(), e);
             return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get lesson by course id fail", null);

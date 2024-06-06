@@ -28,7 +28,7 @@ public class LessonController {
     private ILessonService lessonService;
 
     @PostMapping("/add-lesson")
-    public ResponseEntity<ResponseCommon<AddLessonResponse>> addLesson(@Valid @RequestBody AddLessonRequest addLessonRequest){
+    public ResponseEntity<ResponseCommon<AddLessonResponse>> addLesson(@Valid @RequestBody AddLessonRequest addLessonRequest) {
         ResponseCommon<AddLessonResponse> response = lessonService.addLesson(addLessonRequest);
         if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
@@ -40,7 +40,7 @@ public class LessonController {
     }
 
     @PutMapping("/update-lesson")
-    public ResponseEntity<ResponseCommon<UpdateLessonResponse>> updateLesson(@Valid @RequestBody UpdateLessonRequest updateLessonRequest){
+    public ResponseEntity<ResponseCommon<UpdateLessonResponse>> updateLesson(@Valid @RequestBody UpdateLessonRequest updateLessonRequest) {
         ResponseCommon<UpdateLessonResponse> response = lessonService.updateLesson(updateLessonRequest);
         if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
@@ -52,7 +52,7 @@ public class LessonController {
     }
 
     @DeleteMapping("/delete-lesson")
-    public ResponseEntity<ResponseCommon<DeleteLessonResponse>> deleteLesson(@Valid @RequestBody DeleteLessonRequest deleteLessonRequest){
+    public ResponseEntity<ResponseCommon<DeleteLessonResponse>> deleteLesson(@Valid @RequestBody DeleteLessonRequest deleteLessonRequest) {
         ResponseCommon<DeleteLessonResponse> response = lessonService.deleteLesson(deleteLessonRequest);
         if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
@@ -64,50 +64,51 @@ public class LessonController {
     }
 
     @GetMapping("/find-all-lesson")
-    public ResponseEntity<ResponseCommon<FindAllLessonResponse>> findAllLesson(){
+    public ResponseEntity<ResponseCommon<FindAllLessonResponse>> findAllLesson() {
         ResponseCommon<FindAllLessonResponse> response = lessonService.findAllLesson();
         if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
         } else if (response.getCode() == ResponseCode.LESSON_LIST_IS_EMPTY.getCode()) {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), "Lesson list is empty", null));
         } else {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Get All lesson fail", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get All lesson fail", null));
         }
     }
+
     @GetMapping("/find-all-lesson-by-deleted")
-    public ResponseEntity<ResponseCommon<FindAllLessonResponse>> findAllLessonByDeleted(FindLessonByDeletedRequest findLessonByDeletedRequest){
+    public ResponseEntity<ResponseCommon<FindAllLessonResponse>> findAllLessonByDeleted(FindLessonByDeletedRequest findLessonByDeletedRequest) {
         ResponseCommon<FindAllLessonResponse> response = lessonService.findLessonByDeleted(findLessonByDeletedRequest);
         if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
         } else if (response.getCode() == ResponseCode.LESSON_LIST_IS_EMPTY.getCode()) {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), "Lesson list is empty", null));
         } else {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Get All lesson fail", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get All lesson fail", null));
         }
     }
 
     @GetMapping("/get-lesson-by-id")
-    public ResponseEntity<ResponseCommon<GetLessonByIdResponse>> getLessonById(@ParameterObject GetLessonByIdRequest request){
+    public ResponseEntity<ResponseCommon<GetLessonByIdResponse>> getLessonById(@ParameterObject GetLessonByIdRequest request) {
         ResponseCommon<GetLessonByIdResponse> response = lessonService.getLessonById(request);
         if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
         } else if (response.getCode() == ResponseCode.LESSON_NOT_EXIST.getCode()) {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), "Lesson not exist", null));
         } else {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Get lesson by id fail", null));
-}
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get lesson by id fail", null));
+        }
     }
 
     @GetMapping("/page-lesson")
-    public ResponseEntity<ResponseCommon<GetLessonPageResponse>> coursePage(@Valid @RequestBody PageRequestDTO pageRequestDTO){
+    public ResponseEntity<ResponseCommon<GetLessonPageResponse>> coursePage(@Valid @RequestBody PageRequestDTO pageRequestDTO) {
         ResponseCommon<GetLessonPageResponse> response = lessonService.getLessonPage(pageRequestDTO);
         // if response code quals empty list code -> tell user
-        if(response.getCode() == ResponseCode.LESSON_LIST_IS_EMPTY.getCode()){
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(),"Lesson list is empty",null));
-        } else if(response.getCode() == ResponseCode.SUCCESS.getCode()){
-            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(),"Get  lesson page success",response.getData()));
+        if (response.getCode() == ResponseCode.LESSON_LIST_IS_EMPTY.getCode()) {
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Lesson list is empty", null));
+        } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
+            return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get  lesson page success", response.getData()));
         } else {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(),"Get lesson page fail",null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get lesson page fail", null));
         }
     }
 

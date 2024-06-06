@@ -20,6 +20,7 @@ public interface ICourseService {
     ResponseCommon<FindAllCourseResponse> findAllCourse();
 
     ResponseCommon<FindAllCourseResponse> findAllCourseByDeleted(FindCourseByDeletedRequest findCourseByDeletedRequest);
+
     ResponseCommon<GetCourseByIdResponse> getCourseById(GetCourseByIdRequest getCourseByIdRequest);
 
     ResponseCommon<GetTopCourseResponse> getTopCourse(int numberCourse);

@@ -8,6 +8,7 @@ import team2.elearningapplication.entity.Quiz;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

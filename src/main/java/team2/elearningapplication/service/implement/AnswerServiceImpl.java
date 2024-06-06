@@ -173,11 +173,10 @@ public class AnswerServiceImpl implements IAnswerService {
         try {
             Answer answer = answerRepository.findAnswerById(getAnswerByIdRequest.getId()).orElse(null);
             // If answer not exist -> tell user
-            if ( Objects.isNull(answer) ) {
+            if (Objects.isNull(answer)) {
                 log.debug("Answer not exist.");
                 return new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
-            }
-            else {
+            } else {
                 GetAnswerByIdResponse response = new GetAnswerByIdResponse();
                 response.setId(answer.getId());
                 response.setAnswerContent(answer.getAnswerContent());

@@ -29,8 +29,9 @@ public class PaymentService implements IPaymentService {
 
     private final IPaymentRepository paymentRepository;
     private final IUserRepository userRepository;
+
     @Override
-    public  ResponseCommon<PaymentRes> addPayment(double amount) throws UnsupportedEncodingException {
+    public ResponseCommon<PaymentRes> addPayment(double amount) throws UnsupportedEncodingException {
 
         String vnp_TxnRef = VnPayConfig.getRandomNumber(8);
         String vnp_TmnCode = VnPayConfig.vnp_TmnCode;
@@ -43,17 +44,16 @@ public class PaymentService implements IPaymentService {
         vnp_Params.put("vnp_Amount", String.valueOf(lastAmount));
         vnp_Params.put("vnp_Command", VnPayConfig.vnp_Command);
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
-        vnp_Params.put("vnp_IpAddr","127.0.0.1");
+        vnp_Params.put("vnp_IpAddr", "127.0.0.1");
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_OrderInfo", "Payment" + vnp_TxnRef);
-        vnp_Params.put("vnp_OrderType","other");
+        vnp_Params.put("vnp_OrderType", "other");
         vnp_Params.put("vnp_ReturnUrl", VnPayConfig.vnp_ReturnUrl);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_Version", VnPayConfig.vnp_Version);
 //        vnp_Params.put("vnp_BankCode", "NCB");
-
 
 
         cld.add(Calendar.MINUTE, 15);
@@ -72,11 +72,11 @@ public class PaymentService implements IPaymentService {
                 //Build hash data
                 hashData.append(fieldName);
                 hashData.append('=');
-                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
                 //Build query
-                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII));
                 query.append('=');
-                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
                 if (itr.hasNext()) {
                     query.append('&');
                     hashData.append('&');
@@ -134,7 +134,7 @@ public class PaymentService implements IPaymentService {
                     })
                     .collect(Collectors.toList());
             responsePayment.setListPayment(getPaymentByUserResponses);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,responsePayment);
+            return new ResponseCommon<>(ResponseCode.SUCCESS, responsePayment);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseCommon<>(ResponseCode.FAIL, null);
@@ -157,7 +157,7 @@ public class PaymentService implements IPaymentService {
                     })
                     .collect(Collectors.toList());
             responsePayment.setListPayment(getPaymentByUserResponses);
-            return new ResponseCommon<>(ResponseCode.SUCCESS,responsePayment);
+            return new ResponseCommon<>(ResponseCode.SUCCESS, responsePayment);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseCommon<>(ResponseCode.FAIL, null);

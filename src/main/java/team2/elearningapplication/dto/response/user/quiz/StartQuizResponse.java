@@ -12,5 +12,5 @@ public class StartQuizResponse {
     @NotNull
     private Question question;
     @NotNull
-    private  int totalQuestion;
+    private int totalQuestion;
 }

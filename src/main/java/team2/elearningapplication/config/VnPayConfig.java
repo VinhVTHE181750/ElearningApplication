@@ -3,7 +3,6 @@ package team2.elearningapplication.config;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -41,13 +40,13 @@ public class VnPayConfig {
         String digest = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(message.getBytes("UTF-8"));
+            byte[] hash = md.digest(message.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder(2 * hash.length);
             for (byte b : hash) {
                 sb.append(String.format("%02x", b & 0xff));
             }
             digest = sb.toString();
-        } catch (UnsupportedEncodingException | NoSuchAlgorithmException ex) {
+        } catch (NoSuchAlgorithmException ex) {
             digest = "";
         }
         return digest;
@@ -71,7 +70,7 @@ public class VnPayConfig {
                 sb.append("&");
             }
         }
-        return hmacSHA512(secretKey,sb.toString());
+        return hmacSHA512(secretKey, sb.toString());
     }
 
     public static String hmacSHA512(final String key, final String data) {

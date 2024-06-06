@@ -14,17 +14,21 @@ import team2.elearningapplication.entity.Question;
 
 import java.util.List;
 
-public interface IQuestionService  {
+public interface IQuestionService {
 
-        ResponseCommon<AddQuestionResponse> addQuestion(QuestionData questionData);
-        ResponseCommon<UpdateQuestionResponse> updateQuestion(UpdateQuestionRequest updateQuestionRequest);
-        ResponseCommon<DeleteQuestionResponse> deleteQuestion(DeleteQuestionRequest deleteQuestionRequest);
+    ResponseCommon<AddQuestionResponse> addQuestion(QuestionData questionData);
 
-        ResponseCommon<List<Question>> findAllQuestion();
-        ResponseCommon<List<Question>> findAllQuestionByDeleted(FindQuestionByDeletedRequest findQuestionByDeletedRequest);
-        ResponseCommon<GetQuestionByIdResponse> getQuestionById(GetQuestionByIdRequest getQuestionByIdRequest);
+    ResponseCommon<UpdateQuestionResponse> updateQuestion(UpdateQuestionRequest updateQuestionRequest);
 
-        ResponseCommon<GetQuestionPageResponse> getQuestionPage(PageRequestDTO pageRequestDTO);
+    ResponseCommon<DeleteQuestionResponse> deleteQuestion(DeleteQuestionRequest deleteQuestionRequest);
 
-        ResponseCommon<GetQuestionByQuizIdResponse> getQuestionByQuizId(GetQuestionByQuizIDRequest getQuestionByQuizIDRequest);
+    ResponseCommon<List<Question>> findAllQuestion();
+
+    ResponseCommon<List<Question>> findAllQuestionByDeleted(FindQuestionByDeletedRequest findQuestionByDeletedRequest);
+
+    ResponseCommon<GetQuestionByIdResponse> getQuestionById(GetQuestionByIdRequest getQuestionByIdRequest);
+
+    ResponseCommon<GetQuestionPageResponse> getQuestionPage(PageRequestDTO pageRequestDTO);
+
+    ResponseCommon<GetQuestionByQuizIdResponse> getQuestionByQuizId(GetQuestionByQuizIDRequest getQuestionByQuizIDRequest);
 }

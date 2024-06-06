@@ -9,8 +9,9 @@ import team2.elearningapplication.Enum.EnumPaymentProcess;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+
 @Entity
-@Table(name="payment")
+@Table(name = "payment")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -20,28 +21,28 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
-    @JoinColumn(name="user_id",referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name="course_id",referencedColumnName = "id")
+    @JoinColumn(name = "course_id", referencedColumnName = "id")
     private Course course;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="payment_gateway")
+    @Column(name = "payment_gateway")
     private EnumPaymentGateway paymentGateway;
 
-    @Column(name="transaction_id")
+    @Column(name = "transaction_id")
     private String transaction_id;
 
-    @Column(name="amount")
+    @Column(name = "amount")
     private double amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="status")
+    @Column(name = "status")
     private EnumPaymentProcess enumPaymentProcess;
 
-    @Column(name="created_at")
+    @Column(name = "created_at")
     private LocalDateTime created_at;
 
 }

@@ -11,8 +11,9 @@ import team2.elearningapplication.entity.Lesson;
 import java.util.List;
 import java.util.Optional;
 
-public interface ILessonRespository extends JpaRepository<Lesson,Integer> {
+public interface ILessonRespository extends JpaRepository<Lesson, Integer> {
     Optional<Lesson> findLessonById(int id);
+
     @Query("SELECT l FROM Lesson l WHERE l.ordNumber = :ordNumber AND l.course.id = :courseId AND l.isDeleted = false")
     Optional<Lesson> findLessonByOrdNumberAndCourse(@Param("ordNumber") int ordNumber, @Param("courseId") int courseId);
 
@@ -20,7 +21,8 @@ public interface ILessonRespository extends JpaRepository<Lesson,Integer> {
 
     Page<Lesson> findAllByIsDeleted(boolean isDeleted, Pageable pageable);
 
-    List<Lesson>  findAllByCourse(Course course);
+    List<Lesson> findAllByCourse(Course course);
+
     @Query("SELECT COUNT(l) FROM Lesson l WHERE l.course.id = :courseId")
     int countLessonsByCourseId(@Param("courseId") int courseId);
 }

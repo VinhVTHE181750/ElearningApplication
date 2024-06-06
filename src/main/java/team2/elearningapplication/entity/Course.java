@@ -26,23 +26,23 @@ public class Course {
     @Column(name = "description")
     private String description;
     @ManyToOne
-    @JoinColumn(name="category_id",referencedColumnName = "id")
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "link_thummail")
     private String linkThumnail;
-    @Column(name="price")
+    @Column(name = "price")
     private double price;
-    @Column(name="deleted")
+    @Column(name = "deleted")
     private boolean isDeleted;
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @ManyToOne
-    @JoinColumn (name="created_by",referencedColumnName = "id")
+    @JoinColumn(name = "created_by", referencedColumnName = "id")
     private User userCreated;
     @ManyToOne
-    @JoinColumn(name="updated_by",referencedColumnName = "id")
+    @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private User userUpdated;
 
 }

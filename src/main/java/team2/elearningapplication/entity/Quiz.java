@@ -1,5 +1,3 @@
-
-
 package team2.elearningapplication.entity;
 
 import lombok.AllArgsConstructor;
@@ -27,14 +25,14 @@ public class Quiz {
     private Lesson lesson;
     @Column(name = "name")
     private String name;
-    @Column(name="deleted")
+    @Column(name = "deleted")
     private boolean isDeleted;
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @ManyToOne
-    @JoinColumn (name="created_by",referencedColumnName = "id")
+    @JoinColumn(name = "created_by", referencedColumnName = "id")
     private User userCreated;
     @ManyToOne
-    @JoinColumn(name="updated_by",referencedColumnName = "id")
+    @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private User userUpdated;
 }

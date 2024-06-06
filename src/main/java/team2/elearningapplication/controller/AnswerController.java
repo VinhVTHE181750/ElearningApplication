@@ -114,6 +114,7 @@ public class AnswerController {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Find all answers failed", null));
         }
     }
+
     @GetMapping("/get-answer-by-question-id")
     public ResponseEntity<ResponseCommon<List<GetAnswerByQuestionIdResponse>>> getAnswerByQuestionId(@ParameterObject GetAnswerByQuestionIdRequest getAnswerByQuestionIdRequest) {
         try {

@@ -13,6 +13,7 @@ import team2.elearningapplication.security.jwt.JWTResponse;
 public interface IUserService {
 
     ResponseCommon<GetUserByUsernameResponse> getUserByUsername(GetUserByUsernameRequest getUserByUsernameRequest);
+
     ResponseCommon<CreateUserResponseDTO> createUser(CreateUserRequest requestDTO);
 
     User updateUser(User user);

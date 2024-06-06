@@ -14,16 +14,21 @@ import team2.elearningapplication.dto.response.user.lesson.LessonCompletedRespon
 
 public interface ILessonService {
     ResponseCommon<AddLessonResponse> addLesson(AddLessonRequest addLessonRequest);
+
     ResponseCommon<UpdateLessonResponse> updateLesson(UpdateLessonRequest updateLessonRequest);
+
     ResponseCommon<DeleteLessonResponse> deleteLesson(DeleteLessonRequest deleteLessonRequest);
 
     ResponseCommon<FindAllLessonResponse> findAllLesson();
+
     ResponseCommon<FindAllLessonResponse> findLessonByDeleted(FindLessonByDeletedRequest findLessonByDeletedRequest);
+
     ResponseCommon<GetLessonByIdResponse> getLessonById(GetLessonByIdRequest getLessonByIdRequest);
 
     ResponseCommon<GetLessonPageResponse> getLessonPage(PageRequestDTO pageRequestDTO);
 
     ResponseCommon<GetLessonByCourseIdResponse> getLessonByCourseId(GetLessonByCourseIdRequest getLessonByCourseIdRequest);
+
     ResponseCommon<LessonCompletedResponse> completeLesson(LessonCompletedRequest completeLessonRequest);
 
     ResponseCommon<GetTrackingCourse> trackingCourse(GetTrackingCourseRequest getTrackingCourseRequest);

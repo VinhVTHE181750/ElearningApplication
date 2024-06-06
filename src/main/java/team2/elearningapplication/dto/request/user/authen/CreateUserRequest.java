@@ -24,7 +24,7 @@ public class CreateUserRequest {
     private String email;
     @NotBlank
     private String phone;
-//    @NotNull
+    //    @NotNull
     private EnumTypeRole role = EnumTypeRole.STUDENT;
     @NotBlank
     private String fullName;

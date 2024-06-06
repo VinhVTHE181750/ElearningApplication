@@ -49,9 +49,9 @@ public class User {
     private EnumUserStatus status;
     @Column(name = "otp")
     private String otp;
-    @Column(name="session_id")
+    @Column(name = "session_id")
     private Integer session_id;
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
 }

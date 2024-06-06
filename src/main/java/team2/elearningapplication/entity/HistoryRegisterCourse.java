@@ -1,5 +1,3 @@
-
-
 package team2.elearningapplication.entity;
 
 import lombok.AllArgsConstructor;
@@ -37,10 +35,10 @@ public class HistoryRegisterCourse {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @OneToOne
-    @JoinColumn(name="payment_id",referencedColumnName = "id")
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
     private Payment payment;
     @OneToOne
-    @JoinColumn(name="order_id",referencedColumnName = "id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
 
 }

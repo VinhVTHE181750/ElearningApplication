@@ -149,8 +149,7 @@ public class CategoryServiceImpl implements ICategoryService {
             if (Objects.isNull(category)) {
                 log.debug("Get Category by id failed: Category does not exist");
                 return new ResponseCommon<>(ResponseCode.CATEGORY_NOT_EXIST, null);
-            }
-            else {
+            } else {
                 GetCategoryByIdResponse response = new GetCategoryByIdResponse();
                 response.setId(category.getId());
                 response.setName(category.getName());

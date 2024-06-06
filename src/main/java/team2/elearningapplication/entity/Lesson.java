@@ -20,7 +20,7 @@ public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name="lesson_name")
+    @Column(name = "lesson_name")
     private String name;
     @Column(name = "stt")
     private int ordNumber;
@@ -33,14 +33,14 @@ public class Lesson {
     private String description;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @Column(name="deleted")
+    @Column(name = "deleted")
     private boolean isDeleted;
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @ManyToOne
-    @JoinColumn (name="created_by",referencedColumnName = "id")
+    @JoinColumn(name = "created_by", referencedColumnName = "id")
     private User userCreated;
     @ManyToOne
-    @JoinColumn(name="updated_by",referencedColumnName = "id")
+    @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private User userUpdated;
 }

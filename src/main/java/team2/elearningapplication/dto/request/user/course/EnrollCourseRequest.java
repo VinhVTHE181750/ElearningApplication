@@ -11,5 +11,5 @@ public class EnrollCourseRequest {
     private int courseId;
     @NotBlank
     private String username;
-    
+
 }

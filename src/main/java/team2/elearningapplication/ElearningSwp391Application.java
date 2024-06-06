@@ -13,13 +13,14 @@ public class ElearningSwp391Application {
         SpringApplication.run(ElearningSwp391Application.class, args);
 
     }
+
     @Bean
-    public Cloudinary cloudinary(){
+    public Cloudinary cloudinary() {
         Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", "djldy7tmh",
                 "api_key", "768669543812518",
                 "api_secret", "***************************",
-                "secure",true));
+                "secure", true));
         return cloudinary;
     }
 

@@ -6,7 +6,9 @@ import team2.elearningapplication.dto.response.user.post.*;
 
 public interface IPostService {
     ResponseCommon<AddPostResponse> addPost(AddPostRequest addPostRequest);
+
     ResponseCommon<UpdatePostResponse> updatePost(UpdatePostRequest updatePostRequest);
+
     ResponseCommon<DeletePostResponse> deletePost(DeletePostRequest deletePostRequest);
 
     ResponseCommon<FindAllPostResponse> findAllPost(GetPostByDeleted getPostByDeleted);
