@@ -2,7 +2,6 @@ package team2.elearningapplication.dto.response.user.lesson;
 
 import lombok.Data;
 import team2.elearningapplication.entity.Lesson;
-import team2.elearningapplication.entity.Question;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

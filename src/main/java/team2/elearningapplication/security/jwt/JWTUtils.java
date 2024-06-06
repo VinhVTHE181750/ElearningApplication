@@ -1,13 +1,15 @@
 package team2.elearningapplication.security.jwt;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;;
+import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import team2.elearningapplication.security.UserDetailsImpl;
 
 import java.util.Date;
 import java.util.stream.Collectors;
+
+;
 
 @Component
 public class JWTUtils {

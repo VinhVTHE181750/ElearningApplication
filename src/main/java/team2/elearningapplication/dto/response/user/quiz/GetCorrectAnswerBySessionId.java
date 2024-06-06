@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import team2.elearningapplication.dto.response.user.answer.AnswerCorrectDTO;
-import team2.elearningapplication.entity.Answer;
 
 import java.util.List;
 

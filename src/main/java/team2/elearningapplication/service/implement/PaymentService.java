@@ -6,7 +6,6 @@ import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.config.VnPayConfig;
 import team2.elearningapplication.dto.common.PaymentRes;
 import team2.elearningapplication.dto.common.ResponseCommon;
-import team2.elearningapplication.dto.common.TransactionStatus;
 import team2.elearningapplication.dto.request.user.payment.GetPaymentByUserRequest;
 import team2.elearningapplication.dto.response.admin.GetTotalRevenueResponse;
 import team2.elearningapplication.dto.response.user.payment.GetPaymentByUserResponse;

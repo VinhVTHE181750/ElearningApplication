@@ -1,7 +1,5 @@
 package team2.elearningapplication.service.email;
 
-import javax.mail.internet.MimeMessage;
-
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,6 +10,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import team2.elearningapplication.entity.Mail;
 
+import javax.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
 
 @Service

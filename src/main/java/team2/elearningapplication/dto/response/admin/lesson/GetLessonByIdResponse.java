@@ -3,9 +3,6 @@ package team2.elearningapplication.dto.response.admin.lesson;
 import lombok.*;
 import team2.elearningapplication.entity.Course;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

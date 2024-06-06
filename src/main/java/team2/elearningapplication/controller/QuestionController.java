@@ -14,7 +14,6 @@ import team2.elearningapplication.dto.response.admin.question.AddQuestionRespons
 import team2.elearningapplication.dto.response.admin.question.DeleteQuestionResponse;
 import team2.elearningapplication.dto.response.admin.question.GetQuestionByIdResponse;
 import team2.elearningapplication.dto.response.admin.question.UpdateQuestionResponse;
-import team2.elearningapplication.dto.response.user.course.PageCourseResponse;
 import team2.elearningapplication.dto.response.user.question.GetQuestionByQuizIdResponse;
 import team2.elearningapplication.dto.response.user.question.GetQuestionPageResponse;
 import team2.elearningapplication.entity.Question;

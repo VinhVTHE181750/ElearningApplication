@@ -3,7 +3,6 @@ package team2.elearningapplication.dto.response.user.post;
 import lombok.*;
 import team2.elearningapplication.entity.User;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

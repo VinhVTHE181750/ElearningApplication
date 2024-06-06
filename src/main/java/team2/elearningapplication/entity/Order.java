@@ -3,7 +3,6 @@ package team2.elearningapplication.entity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import team2.elearningapplication.Enum.EnumTypeProcessPayment;
-import team2.elearningapplication.Enum.EnumTypeRole;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

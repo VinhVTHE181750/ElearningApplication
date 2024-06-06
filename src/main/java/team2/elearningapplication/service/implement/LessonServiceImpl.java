@@ -19,7 +19,10 @@ import team2.elearningapplication.dto.response.user.lesson.GetLessonByCourseIdRe
 import team2.elearningapplication.dto.response.user.lesson.GetLessonPageResponse;
 import team2.elearningapplication.dto.response.user.lesson.GetTrackingCourse;
 import team2.elearningapplication.dto.response.user.lesson.LessonCompletedResponse;
-import team2.elearningapplication.entity.*;
+import team2.elearningapplication.entity.Course;
+import team2.elearningapplication.entity.Lesson;
+import team2.elearningapplication.entity.LessonCompleted;
+import team2.elearningapplication.entity.User;
 import team2.elearningapplication.repository.ICourseRepository;
 import team2.elearningapplication.repository.ILessonCompletedRepository;
 import team2.elearningapplication.repository.ILessonRespository;

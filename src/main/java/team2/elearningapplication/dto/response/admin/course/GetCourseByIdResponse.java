@@ -2,7 +2,6 @@ package team2.elearningapplication.dto.response.admin.course;
 
 import lombok.*;
 import team2.elearningapplication.entity.Category;
-import team2.elearningapplication.entity.Course;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;

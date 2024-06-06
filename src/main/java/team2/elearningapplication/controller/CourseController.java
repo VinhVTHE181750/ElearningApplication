@@ -2,8 +2,6 @@ package team2.elearningapplication.controller;
 
 import lombok.AllArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +9,8 @@ import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.PageRequestDTO;
 import team2.elearningapplication.dto.common.ResponseCommon;
 import team2.elearningapplication.dto.request.admin.course.*;
-import team2.elearningapplication.dto.request.user.course.*;
 import team2.elearningapplication.dto.request.user.course.EnrollCourseRequest;
+import team2.elearningapplication.dto.request.user.course.*;
 import team2.elearningapplication.dto.response.admin.GetTotalRevenueResponse;
 import team2.elearningapplication.dto.response.admin.course.*;
 import team2.elearningapplication.dto.response.user.course.*;

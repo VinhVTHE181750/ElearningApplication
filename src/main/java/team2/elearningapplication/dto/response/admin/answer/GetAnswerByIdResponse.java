@@ -2,7 +2,6 @@ package team2.elearningapplication.dto.response.admin.answer;
 
 import lombok.*;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 

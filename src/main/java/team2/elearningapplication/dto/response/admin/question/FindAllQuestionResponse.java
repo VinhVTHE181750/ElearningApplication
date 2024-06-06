@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import team2.elearningapplication.Enum.EnumQuestionType;
 import team2.elearningapplication.entity.Question;
 
 import javax.validation.constraints.NotEmpty;

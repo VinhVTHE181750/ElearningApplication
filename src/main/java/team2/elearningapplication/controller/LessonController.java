@@ -13,7 +13,6 @@ import team2.elearningapplication.dto.request.user.lesson.GetLessonByCourseIdReq
 import team2.elearningapplication.dto.request.user.lesson.GetTrackingCourseRequest;
 import team2.elearningapplication.dto.request.user.lesson.LessonCompletedRequest;
 import team2.elearningapplication.dto.response.admin.lesson.*;
-import team2.elearningapplication.dto.response.user.course.PageCourseResponse;
 import team2.elearningapplication.dto.response.user.lesson.GetLessonByCourseIdResponse;
 import team2.elearningapplication.dto.response.user.lesson.GetLessonPageResponse;
 import team2.elearningapplication.dto.response.user.lesson.GetTrackingCourse;

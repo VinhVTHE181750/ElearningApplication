@@ -11,9 +11,6 @@ import team2.elearningapplication.dto.response.user.lesson.GetLessonByCourseIdRe
 import team2.elearningapplication.dto.response.user.lesson.GetLessonPageResponse;
 import team2.elearningapplication.dto.response.user.lesson.GetTrackingCourse;
 import team2.elearningapplication.dto.response.user.lesson.LessonCompletedResponse;
-import team2.elearningapplication.entity.Lesson;
-
-import java.util.List;
 
 public interface ILessonService {
     ResponseCommon<AddLessonResponse> addLesson(AddLessonRequest addLessonRequest);

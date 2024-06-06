@@ -5,7 +5,6 @@ import team2.elearningapplication.Enum.EnumTypeGender;
 import team2.elearningapplication.Enum.EnumTypeRole;
 import team2.elearningapplication.Enum.EnumUserStatus;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;

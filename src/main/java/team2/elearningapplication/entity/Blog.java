@@ -1,6 +1,6 @@
 package team2.elearningapplication.entity;
 
-import lombok.*;
+import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;

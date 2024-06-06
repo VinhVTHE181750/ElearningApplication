@@ -1,8 +1,5 @@
 package team2.elearningapplication.dto.request.user.authen;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +8,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import team2.elearningapplication.Enum.EnumTypeGender;
 import team2.elearningapplication.Enum.EnumTypeRole;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Setter

@@ -18,15 +18,16 @@ import team2.elearningapplication.dto.response.admin.question.AddQuestionRespons
 import team2.elearningapplication.dto.response.admin.question.DeleteQuestionResponse;
 import team2.elearningapplication.dto.response.admin.question.GetQuestionByIdResponse;
 import team2.elearningapplication.dto.response.admin.question.UpdateQuestionResponse;
-import team2.elearningapplication.dto.response.user.course.PageCourseResponse;
 import team2.elearningapplication.dto.response.user.question.GetQuestionByQuizIdResponse;
 import team2.elearningapplication.dto.response.user.question.GetQuestionPageResponse;
-import team2.elearningapplication.entity.*;
+import team2.elearningapplication.entity.Answer;
+import team2.elearningapplication.entity.Question;
+import team2.elearningapplication.entity.Quiz;
+import team2.elearningapplication.entity.User;
 import team2.elearningapplication.repository.*;
 import team2.elearningapplication.service.IQuestionService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 

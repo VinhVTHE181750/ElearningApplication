@@ -5,7 +5,6 @@ import team2.elearningapplication.dto.request.admin.answer.*;
 import team2.elearningapplication.dto.request.user.answer.GetAnswerByQuestionIdRequest;
 import team2.elearningapplication.dto.response.admin.answer.*;
 import team2.elearningapplication.dto.response.user.answer.GetAnswerByQuestionIdResponse;
-import team2.elearningapplication.entity.Answer;
 
 import java.util.List;
 

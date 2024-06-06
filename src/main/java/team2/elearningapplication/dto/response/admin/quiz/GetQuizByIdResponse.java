@@ -4,7 +4,6 @@ import lombok.*;
 import team2.elearningapplication.entity.Lesson;
 import team2.elearningapplication.entity.Question;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 

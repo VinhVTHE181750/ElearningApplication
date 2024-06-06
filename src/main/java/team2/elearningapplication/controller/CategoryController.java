@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
-import team2.elearningapplication.dto.request.admin.answer.FindAllAnswerByDeletedRequest;
 import team2.elearningapplication.dto.request.admin.category.*;
 import team2.elearningapplication.dto.response.admin.category.*;
 import team2.elearningapplication.service.ICategoryService;
