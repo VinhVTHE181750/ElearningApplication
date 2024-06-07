@@ -24,6 +24,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class QuizServiceImpl implements IQuizService {
     private static final double BASE_MARK = 0.8;
+    private static final String QUIZ_NOT_EXIST = "Quiz not exist";
+
     private final IQuizRepository quizRepository;
     private final ILessonRespository lessonRespository;
     private final IQuestionRepository questionRepository;
@@ -32,7 +34,8 @@ public class QuizServiceImpl implements IQuizService {
     private final EmailService emailService;
     private final ICourseRepository courseRepository;
     private final IHistoryQuizRepository historyQuizRepository;
-    private final Logger log = LoggerFactory.getLogger(QuestionServiceImpl.class);
+
+    private final Logger log = LoggerFactory.getLogger(QuizServiceImpl.class);
 
     @Override
     public ResponseCommon<AddQuizResponse> addQuiz(AddQuizRequest addQuizRequest) {
@@ -68,7 +71,7 @@ public class QuizServiceImpl implements IQuizService {
             User user = userRepository.findByUsername(updateQuizRequest.getUsername()).orElse(null);
             // if quiz is null -> tell user
             if (Objects.isNull(quiz))
-                return new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(), "Quiz not exist", null);
+                return new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(), QUIZ_NOT_EXIST, null);
             else {
                 quiz.setName(updateQuizRequest.getQuizName());
                 quiz.setLesson(lessonRespository.findLessonById(updateQuizRequest.getLessonID()).orElse(null));
@@ -97,7 +100,7 @@ public class QuizServiceImpl implements IQuizService {
             User user = userRepository.findByUsername(deleteQuizRequest.getUsername()).orElse(null);
             // if quiz is null -> tell user
             if (Objects.isNull(quiz))
-                return new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(), "Quiz not exist", null);
+                return new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(), QUIZ_NOT_EXIST, null);
             else {
                 quiz.setDeleted(true);
                 quiz.setUpdatedAt(LocalDateTime.now());
@@ -157,8 +160,8 @@ public class QuizServiceImpl implements IQuizService {
             Quiz quiz = quizRepository.findQuizById(getQuizByIdRequest.getId()).orElse(null);
             // If quiz not exist -> tell user
             if (Objects.isNull(quiz)) {
-                log.debug("Quiz not exist");
-                return new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(), "Quiz not exist", null);
+                log.debug(QUIZ_NOT_EXIST);
+                return new ResponseCommon<>(ResponseCode.QUIZ_NOT_EXIST.getCode(), QUIZ_NOT_EXIST, null);
             } else {
                 GetQuizByIdResponse response = new GetQuizByIdResponse();
 
@@ -196,74 +199,19 @@ public class QuizServiceImpl implements IQuizService {
         }
     }
 
-//    @Override
-//    public ResponseCommon<NextQuestionResponse> nextQuestion(NextQuestionRequest nextQuestionRequest) {
-//        try {
-//            HistoryAnswer historyAnswer = new HistoryAnswer();
-//            Question question = questionRepository.findQuestionByQuizIDAndAndOrdQuestion(nextQuestionRequest.getQuizId(), nextQuestionRequest.getOrdQuestion());
-//            log.error("next question: " + question.toString());
-//            List<Answer> totalAnswer = answerRepository.findAll();
-////            List<Answer> answerList = new ArrayList<>();
-//            // handle when multiple choice
-////            List<Integer> answerId = nextQuestionRequest.getAnswerId();
-////            for (int i = 0; i < totalAnswer.size(); i++) {
-////                for (int j = 0; j < answerId.size(); j++) {
-////                    if(totalAnswer.get(i).getId() == answerId.get(j)){
-////                        answerList.add(totalAnswer.get(i));
-////                    }
-////                }
-////            }
-////            for (Answer answer: answerList) {
-////                historyAnswer.setUserAnswerId(answer.getId());
-////                historyAnswerRepository.save(historyAnswer);
-////            }
-////            historyAnswer.setUserAnswerId(nextQuestionRequest.getAnswerId());
-//            Answer answerCorrect = answerRepository.findCorrectAnswer(nextQuestionRequest.getPreQuestionId());
-//            log.error("answer correct" + answerCorrect);
-////            historyAnswer.setQuestionId(nextQuestionRequest.getPreQuestionId());
-//            historyAnswer.setSessionId(nextQuestionRequest.getSessionId());
-//            historyAnswer.setUser(userRepository.findByUsername(nextQuestionRequest.getUsername()).orElse(null));
-//            historyAnswerRepository.save(historyAnswer);
-////            historyAnswer.setAnswerIdCorrect(answerCorrect.getId());
-//            historyAnswerRepository.save(historyAnswer);
-//            NextQuestionResponse nextQuestionResponse = new NextQuestionResponse();
-//            nextQuestionResponse.setQuestion(question);
-//            return new ResponseCommon<>(ResponseCode.SUCCESS,nextQuestionResponse);
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//            log.error("next question failed");
-//            return new ResponseCommon<>(ResponseCode.FAIL.getCode(),"next question failed",null);
-//        }
-//    }
-
     @Override
     public ResponseCommon<FinishQuizResponse> finishQuiz(FinishQuizRequest finishQuizRequest) {
         try {
             User user = userRepository.findByUsername(finishQuizRequest.getUsername()).orElse(null);
             Course course = courseRepository.findCourseById(finishQuizRequest.getCourseId()).orElse(null);
             List<Integer> answerByUser = finishQuizRequest.getAnswerIdList();
-//            List<Integer> answerCorrect = answerRepository.findMatchingAnswerIdsByQuizId(finishQuizRequest.getQuizId());
-//            System.out.println(answerCorrect);
-//            List<Integer> answerByUserCopy = new ArrayList<>(answerByUser);
-//            List<Integer> answerCorrectCopy = new ArrayList<>(answerCorrect);
-//            answerByUserCopy.retainAll(answerCorrectCopy);
-//            int commonCount = answerByUserCopy.size();
-//            System.out.println(commonCount);
-//            int differentCount = answerByUser.size() + answerCorrect.size() - 2 * commonCount;
-//            System.out.println(differentCount);
-//            int totalCorrect = commonCount;
-//            int totalIncorrect = differentCount;
-//            List<HistoryAnswer> listCorrectAnswer = historyAnswerRepository.findMatchingAnswers(finishQuizRequest.getSessionId());
-//            List<HistoryAnswer> listIncorrectAnswer = historyAnswerRepository.findNonMatchingAnswers(finishQuizRequest.getSessionId());
-//            int totalCorrect = listCorrectAnswer.size();
-//            int totalIncorrect = listIncorrectAnswer.size();
             HistoryQuiz historyQuiz = new HistoryQuiz();
             int totalCorrect = 0;
             int totalQuestion = questionRepository.countQuestionsByQuizId(finishQuizRequest.getQuizId());
             int totalIncorrect = totalQuestion - totalCorrect;
             for (int i = 0; i < answerByUser.size(); i++) {
                 boolean isCorrect = answerRepository.checkIsCorrect(answerByUser.get(i));
-                log.debug("isCorrect: " + isCorrect);
+                log.debug(Level.DeString.format("isCorrect: %s", isCorrect));
                 if (isCorrect) {
                     totalCorrect++;
                     historyQuiz.setUser(user);
@@ -285,6 +233,8 @@ public class QuizServiceImpl implements IQuizService {
             double mark = (double) totalCorrect / totalQuestion;
             if (mark >= BASE_MARK) {
                 log.info("START... Sending email");
+                assert user != null;
+                assert course != null;
                 emailService.sendEmail(setUpMail(user.getEmail(), course.getName()));
                 log.info("END... Email sent successfully");
             }
@@ -314,16 +264,12 @@ public class QuizServiceImpl implements IQuizService {
     @Override
     public ResponseCommon<ResetQuizResponse> resetQuiz(ResetQuizRequest resetQuizRequest) {
         try {
-            int sessionId = resetQuizRequest.getSessionId();
-            String username = resetQuizRequest.getUsername();
-            User user = userRepository.findByUsername(username).orElse(null);
-//            historyAnswerRepository.deleteBySessionIdAndUser(sessionId,user);
+
             int newSessionId = CommonUtils.getSessionID();
             ResetQuizResponse resetQuizResponse = new ResetQuizResponse();
             resetQuizResponse.setNewSessionId(newSessionId);
             return new ResponseCommon<>(ResponseCode.SUCCESS, resetQuizResponse);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("reset quiz  failed");
             return new ResponseCommon<>(ResponseCode.FAIL.getCode(), "reset quiz  failed", null);
         }

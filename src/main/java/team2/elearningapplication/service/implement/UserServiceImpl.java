@@ -31,12 +31,16 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
+
+    private static final String START_MAIL = START_MAIL;
+    private static final String END_MAIL = END_MAIL;
+    private static final String VALUE_OF_EXPIRED = "Value of expired {}";
     private final IUserRepository userRepository;
     private final EmailService emailService;
     private final PasswordService passwordService;
     private final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Value("minhnnde258@gmail.com")
+    @Value("${mail.from}")
     private String mailFrom;
     @Value("${otp.valid.minutes}")
     private int otpValid;
@@ -67,16 +71,13 @@ public class UserServiceImpl implements IUserService {
             int digit = random.nextInt(10); // Số ngẫu nhiên từ 0 đến 9
             randomNumber.append(digit);
         }
-        String result = username + randomNumber;
-        return result;
+        return username + randomNumber;
     }
 
     @Override
     public ResponseCommon<CreateUserResponseDTO> createUser(CreateUserRequest requestDTO) {
         try {
             User user = userRepository.findByEmail(requestDTO.getEmail()).orElse(null);
-            // if username exist and status equals inprocess -> get new otp
-//            log.debug("check user get by username and status{}",requestDTO.getUsername(),user.getStatus());
             if (Objects.nonNull(user) && user.getStatus() != EnumUserStatus.IN_PROCESS) {
                 return new ResponseCommon<>(ResponseCode.USER_EXIST, null);
             }
@@ -95,16 +96,16 @@ public class UserServiceImpl implements IUserService {
             user.setGender(requestDTO.getGender());
             user.setDate_of_birth(requestDTO.getDateOfBirth());
             LocalDateTime localDateTime = LocalDateTime.now();
-            LocalDateTime expired = localDateTime.plusMinutes(Long.valueOf(otpValid));
+            LocalDateTime expired = localDateTime.plusMinutes(otpValid);
             user.setStatus(EnumUserStatus.IN_PROCESS);
-            log.debug("Value of expired{}", expired);
+            log.debug(VALUE_OF_EXPIRED, expired);
             user.setExpiredOTP(expired);
             user.setCreatedAt(LocalDateTime.now());
             user.setOtp(CommonUtils.getOTP());
             User createdUser = userRepository.save(user);
-            log.info("START... Sending email");
+            log.info(START_MAIL);
             emailService.sendEmail(setUpMail(user.getEmail(), user.getOtp()));
-            log.info("END... Email sent success");
+            log.info(END_MAIL);
             CreateUserResponseDTO responseDTO = new CreateUserResponseDTO();
             responseDTO.setUsername(createdUser.getUsername());
             responseDTO.setEmail(createdUser.getEmail());
@@ -155,8 +156,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElse(null);
-        return user;
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     @Override
@@ -172,18 +172,16 @@ public class UserServiceImpl implements IUserService {
             LocalDateTime localDateTime = LocalDateTime.now();
             String otp = CommonUtils.getOTP();
             //step2: send email
-            log.info("START... Sending email");
+            log.info(START_MAIL);
             emailService.sendEmail(setUpMail(user.getEmail(), otp));
-            log.info("END... Email sent success");
-//            user.setUsername(genUserFromEmail(request.getEmail()));
+            log.info(END_MAIL);
             if (request.isCreate()) {
                 user.setStatus(EnumUserStatus.IN_PROCESS);
             }
-            LocalDateTime expired = localDateTime.plusMinutes(Long.valueOf(otpValid));
-            log.debug("Value of expired{}", expired);
+            LocalDateTime expired = localDateTime.plusMinutes(otpValid);
+            log.debug(VALUE_OF_EXPIRED, expired);
             user.setExpiredOTP(expired);
             user.setOtp(otp);
-            User createdUser = userRepository.save(user);
             GetOTPResponse response = new GetOTPResponse(user.getUsername(), user.getEmail());
             return new ResponseCommon<>(ResponseCode.SUCCESS, response);
         } catch (Exception e) {
@@ -259,7 +257,7 @@ public class UserServiceImpl implements IUserService {
     public ResponseCommon<ChangePasswordResponse> changePassword(ChangePasswordRequest changePasswordRequest) {
         try {
             String username = SecurityUtils.getUsernameAuth();
-            System.out.println(username);
+            log(username);
             User user = userRepository.findByUsername(username).orElse(null);
             // if user is null -> tell error
             log.debug("change passsword with username{}", username);
@@ -381,13 +379,14 @@ public class UserServiceImpl implements IUserService {
             LocalDateTime localDateTime = LocalDateTime.now();
             String otp = CommonUtils.getOTP();
             //step2: send email
-            log.info("START... Sending email");
+            log.info(START_MAIL);
+            assert user != null;
             emailService.sendEmail(setUpMail(user.getEmail(), otp));
-            log.info("END... Email sent success");
+            log.info(END_MAIL);
             user.setUsername(genUserFromEmail(request.getEmail()));
 
-            LocalDateTime expired = localDateTime.plusMinutes(Long.valueOf(otpValid));
-            log.debug("Value of expired{}", expired);
+            LocalDateTime expired = localDateTime.plusMinutes(otpValid);
+            log.debug(VALUE_OF_EXPIRED, expired);
             user.setExpiredOTP(expired);
             user.setOtp(otp);
             userRepository.save(user);
@@ -402,6 +401,7 @@ public class UserServiceImpl implements IUserService {
     public ResponseCommon<SetRoleUserResponse> setRole(SetRoleUserRequest setRoleUserRequest) {
         try {
             User user = userRepository.findByUsername(setRoleUserRequest.getUsername()).orElse(null);
+            assert user != null;
             user.setRole(setRoleUserRequest.getTypeRole());
             userRepository.save(user);
             SetRoleUserResponse setRoleUserResponse = new SetRoleUserResponse();

@@ -34,6 +34,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class CourseServiceImpl implements ICourseService {
+
+    private static final String ENROLL_FAILED = ENROLL_FAILED;
     private final ICourseRepository courseRepository;
     private final ICategoryRepository categoryRepository;
     private final IUserRepository userRepository;
@@ -63,7 +65,7 @@ public class CourseServiceImpl implements ICourseService {
             course.setPrice(addCourseRequest.getPrice());
             course.setCreatedAt(LocalDateTime.now());
             Category category = categoryRepository.findCategoryByName(addCourseRequest.getCategory()).orElse(null);
-            System.out.println(category);
+            log(category);
             course.setCategory(category);
             course.setUserCreated(user);
 
@@ -369,7 +371,7 @@ public class CourseServiceImpl implements ICourseService {
         try {
             EnrollCourseResponse enrollCourseResponse = new EnrollCourseResponse();
             Course courseBuy = courseRepository.findCourseById(enrollCourseRequest.getCourseId()).orElse(null);
-            System.out.println(courseBuy);
+            log(courseBuy);
             Order order = new Order();
             order.setCreated_at(LocalDateTime.now());
             order.setUser(userRepository.findByUsername(enrollCourseRequest.getUsername()).orElse(null));
@@ -391,7 +393,7 @@ public class CourseServiceImpl implements ICourseService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            log.debug("Enroll Course failed: " + e.getMessage());
+            log.debug(ENROLL_FAILED + e.getMessage());
             return new ResponseCommon<>(ResponseCode.FAIL, null);
         }
     }
@@ -427,7 +429,7 @@ public class CourseServiceImpl implements ICourseService {
             return processPayment(order);
         } catch (Exception e) {
             e.printStackTrace();
-            log.debug("Enroll Course failed: " + e.getMessage());
+            log.debug(ENROLL_FAILED + e.getMessage());
             return new ResponseCommon<>(ResponseCode.FAIL, null);
         }
     }
@@ -452,8 +454,8 @@ public class CourseServiceImpl implements ICourseService {
         return enumTypeProcessPayment.equals(EnumTypeProcessPayment.INPROCESS);
     }
 
-    private boolean validateResponseCode(String vnp_ResponseCode) {
-        return vnp_ResponseCode.equals("00");
+    private boolean validateResponseCode(String vnpResponseCode) {
+        return vnpResponseCode.equals("00");
     }
 
     private ResponseCommon<PaymentConfirmResponse> processPayment(Order order) {
@@ -485,10 +487,10 @@ public class CourseServiceImpl implements ICourseService {
         String fullname = payment.getUser().getFullName();
         String coursename = payment.getCourse().getName();
         double amount = payment.getAmount();
-        String transaction_id = payment.getTransaction_id();
+        String transactionId = payment.getTransaction_id();
         LocalDateTime createdAt = payment.getCreated_at();
         log.info("START... Sending email");
-        emailService.sendEmail(setUpMailPayment(mailTo, fullname, coursename, amount, transaction_id, createdAt));
+        emailService.sendEmail(setUpMailPayment(mailTo, fullname, coursename, amount, transactionId, createdAt));
         log.info("END... Email sent success");
         return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Confirm success", null);
     }
@@ -523,9 +525,7 @@ public class CourseServiceImpl implements ICourseService {
         fields.put("vnp_TransactionStatus", paymentConfirmRequest.getVnp_TransactionStatus());
         fields.put("vnp_TxnRef", paymentConfirmRequest.getVnp_TxnRef());
 
-        String queryString = VnPayConfig.hashAllFields(fields);
-
-        return queryString;
+        return VnPayConfig.hashAllFields(fields);
     }
 
     @Override
@@ -539,7 +539,7 @@ public class CourseServiceImpl implements ICourseService {
             return new ResponseCommon<>(ResponseCode.SUCCESS, checkEnrollCourseResponse);
         } catch (Exception e) {
             e.printStackTrace();
-            log.debug("Enroll Course failed: " + e.getMessage());
+            log.debug(ENROLL_FAILED + e.getMessage());
             return new ResponseCommon<>(ResponseCode.FAIL, null);
         }
     }
