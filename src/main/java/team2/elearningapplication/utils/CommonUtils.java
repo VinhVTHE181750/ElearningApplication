@@ -15,7 +15,7 @@ public class CommonUtils {
         return random.nextInt();
     }
 
-    public String getSessionId() {
+    public String getSessionIDString() {
         return UUID.randomUUID().toString();
     }
 
