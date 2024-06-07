@@ -16,12 +16,11 @@ public class ElearningSwp391Application {
 
     @Bean
     public Cloudinary cloudinary() {
-        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+        return new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", "djldy7tmh",
                 "api_key", "768669543812518",
                 "api_secret", "***************************",
                 "secure", true));
-        return cloudinary;
     }
 
 }
