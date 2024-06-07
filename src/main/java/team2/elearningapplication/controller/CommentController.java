@@ -9,14 +9,11 @@ import team2.elearningapplication.dto.common.ResponseCommon;
 import team2.elearningapplication.dto.request.admin.course.AddCourseRequest;
 import team2.elearningapplication.dto.response.admin.course.AddCourseResponse;
 import team2.elearningapplication.service.ICourseService;
-import team2.elearningapplication.service.IPaymentService;
 
 import javax.validation.Valid;
 
 public class CommentController {
-    private final int TOP_COURSE = 10;
     private ICourseService courseService;
-    private IPaymentService paymentService;
 
     @PostMapping("/add-course")
     public ResponseEntity<ResponseCommon<AddCourseResponse>> addCourse(@Valid @RequestBody AddCourseRequest addCourseRequest) {

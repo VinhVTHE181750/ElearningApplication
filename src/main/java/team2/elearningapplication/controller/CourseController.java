@@ -23,7 +23,9 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/course")
 @AllArgsConstructor
 public class CourseController {
-    private final int topCourse = 10;
+    private static final int TOP_COURSE = 10;
+    private static final String COURSE_LIST_EMPTY = "Course list is empty";
+    private static final String COURSE_NOT_EXIST = "Course does not exist.";
     private ICourseService courseService;
     private IPaymentService paymentService;
 
@@ -48,7 +50,7 @@ public class CourseController {
             return ResponseEntity.ok(response);
         } // if code equal course not exist -> tell error
         else if (response.getCode() == ResponseCode.COURSE_NOT_EXIST.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), "Course not exist", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), COURSE_NOT_EXIST, null));
         } // else -> return fail  update
         else {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update course fail", null));
@@ -78,7 +80,7 @@ public class CourseController {
             return ResponseEntity.ok(response);
         } //  if code response equals code courseList empty -> tell user
         else if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), COURSE_LIST_EMPTY, null));
         } // else -> return fail
         else {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL, null));
@@ -93,7 +95,7 @@ public class CourseController {
             return ResponseEntity.ok(response);
         } //  if code response equals code courseList empty -> tell user
         else if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), COURSE_LIST_EMPTY, null));
         } // else -> return fail
         else {
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL, null));
@@ -117,10 +119,10 @@ public class CourseController {
 
     @GetMapping("/get-top-course")
     public ResponseEntity<ResponseCommon<GetTopCourseResponse>> getTopCourse() {
-        ResponseCommon<GetTopCourseResponse> response = courseService.getTopCourse(topCourse);
+        ResponseCommon<GetTopCourseResponse> response = courseService.getTopCourse(TOP_COURSE);
         // if response code quals empty list code -> tell user
         if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), COURSE_LIST_EMPTY, null));
         } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get top course success", response.getData()));
         } else {
@@ -130,10 +132,10 @@ public class CourseController {
 
     @GetMapping("/get-newest-course")
     public ResponseEntity<ResponseCommon<GetNewestCourseResponse>> getNewestCourse() {
-        ResponseCommon<GetNewestCourseResponse> response = courseService.getNewestCourse(topCourse);
+        ResponseCommon<GetNewestCourseResponse> response = courseService.getNewestCourse(TOP_COURSE);
         // if response code quals empty list code -> tell user
         if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), COURSE_LIST_EMPTY, null));
         } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get newest course success", response.getData()));
         } else {
@@ -146,7 +148,7 @@ public class CourseController {
         ResponseCommon<GetCourseByUserResponse> response = courseService.getCourseByUser(getAllCourseByUserRequest.getUsername());
         // if response code quals empty list code -> tell user
         if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), COURSE_LIST_EMPTY, null));
         } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get course success", response.getData()));
         } else {
@@ -159,7 +161,7 @@ public class CourseController {
         ResponseCommon<GetTotalCourseResponse> response = courseService.getTotalCourse();
         // if response code quals empty list code -> tell user
         if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), COURSE_LIST_EMPTY, null));
         } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get total course success", response.getData()));
         } else {
@@ -172,7 +174,7 @@ public class CourseController {
         ResponseCommon<SearchCourseByNameAndCategoryResponse> response = courseService.searchCourse(searchCourseByNameAndCategoryRequest);
         // if response code quals empty list code -> tell user
         if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), COURSE_LIST_EMPTY, null));
         } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Search course success", response.getData()));
         } else {
@@ -185,7 +187,7 @@ public class CourseController {
         ResponseCommon<PageCourseResponse> response = courseService.getAllCoursePage(pageRequestDTO);
         // if response code quals empty list code -> tell user
         if (response.getCode() == ResponseCode.COURSE_LIST_IS_EMPTY.getCode()) {
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), "Course list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.COURSE_LIST_IS_EMPTY.getCode(), COURSE_LIST_EMPTY, null));
         } else if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok().body(new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Get  course page success", response.getData()));
         } else {

@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping("/api/v1/answer")
 @AllArgsConstructor
 public class AnswerController {
+    public static final String ANSWER_LIST_IS_EMPTY = "Answer list is empty";
     private final IAnswerService answerService;
     private final Logger log = LoggerFactory.getLogger(AnswerController.class);
 
@@ -78,7 +79,7 @@ public class AnswerController {
             return ResponseEntity.ok(response);
         } else if (response.getCode() == ResponseCode.ANSWER_LIST_IS_EMPTY.getCode()) {
             log.debug("findAllAnswer: Answer list is empty.");
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), "Answer list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), ANSWER_LIST_IS_EMPTY, null));
         } else {
             log.error("findAllAnswer: Find all answers failed.");
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Find all answers failed", null));
@@ -108,7 +109,7 @@ public class AnswerController {
             return ResponseEntity.ok(response);
         } else if (response.getCode() == ResponseCode.ANSWER_LIST_IS_EMPTY.getCode()) {
             log.debug("findAllAnswer: Answer list is empty.");
-            return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), "Answer list is empty", null));
+            return ResponseEntity.badRequest().body(new ResponseCommon<>(response.getCode(), ANSWER_LIST_IS_EMPTY, null));
         } else {
             log.error("findAllAnswer: Find all answers failed.");
             return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Find all answers failed", null));
@@ -125,7 +126,7 @@ public class AnswerController {
             } else if (response.getCode() == ResponseCode.FAIL.getCode()) {
                 return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get answer by question ID failed", null));
             } else {
-                return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.ANSWER_LIST_IS_EMPTY.getCode(), "Answer list is empty", null));
+                return ResponseEntity.badRequest().body(new ResponseCommon<>(ResponseCode.ANSWER_LIST_IS_EMPTY.getCode(), ANSWER_LIST_IS_EMPTY, null));
             }
         } catch (Exception e) {
             log.error("getAnswerByQuestionId: An error occurred - " + e.getMessage(), e);
