@@ -20,6 +20,10 @@ public class VnPayConfig {
 
     private static final Random rnd = new Random(); // Declare a static Random instance
 
+    private VnPayConfig() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     public static String Sha256(String message) {
         String digest = null;
         try {

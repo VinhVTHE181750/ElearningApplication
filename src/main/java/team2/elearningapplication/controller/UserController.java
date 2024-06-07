@@ -153,7 +153,7 @@ public class UserController {
     public ResponseEntity<ResponseCommon<ChangePasswordResponse>> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         ResponseCommon<ChangePasswordResponse> response = userService.changePassword(changePasswordRequest);
         String username = SecurityUtils.getUsernameAuth();
-        System.out.println(username);
+        log.info("Username: {}", username);
         if (response.getCode() == ResponseCode.SUCCESS.getCode()) {
             return ResponseEntity.ok(response);
         } else {
