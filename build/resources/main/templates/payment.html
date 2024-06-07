@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Payment Receipt</title>
 </head>
 <body>
@@ -11,9 +11,9 @@
         <div class="inner-content">
             <h1>Payment Receipt</h1>
             <h3>Dear </h3>
-            <p th:text= "${fullname}"></p>
+            <p th:text="${fullname}"></p>
             <h3>We writing your infor of payment you made at</h3>
-            <p th:text= "${created_at}"></pth:text></p>
+            <p th:text="${created_at}"></pth:text></p>
             <p>for course: </p>
             <p th:text="${coursename}"></p>
             <h3>with Amount Paid</h3>

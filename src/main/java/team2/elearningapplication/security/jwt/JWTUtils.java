@@ -6,25 +6,39 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import team2.elearningapplication.security.UserDetailsImpl;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Component
 public class JWTUtils {
 
 
     public String generateAccessToken(UserDetailsImpl userDetails) {
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        String secret = null;
+        try {
+            secret = Files.readString(Path.of("secret.txt"));
+        } catch (IOException e) {
+            throw new SecurityException(e);
+        }
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         return JWT.create()
                 .withSubject(userDetails.getUsername())
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(new Date().getTime() + 86400000))
-                .withClaim("userInfo", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                .withClaim("userInfo", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .sign(algorithm);
     }
 
     public String generateRefreshToken(UserDetailsImpl userDetails) {
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        String secret = null;
+        try {
+            secret = Files.readString(Path.of("secret.txt"));
+        } catch (IOException e) {
+            throw new SecurityException(e);
+        }
+        Algorithm algorithm = Algorithm.HMAC256(secret.getBytes());
         return JWT.create()
                 .withSubject(userDetails.getUsername())
                 .withIssuedAt(new Date())
