@@ -211,7 +211,7 @@ public class QuizServiceImpl implements IQuizService {
             int totalIncorrect = totalQuestion - totalCorrect;
             for (int i = 0; i < answerByUser.size(); i++) {
                 boolean isCorrect = answerRepository.checkIsCorrect(answerByUser.get(i));
-                log.debug(Level.DeString.format("isCorrect: %s", isCorrect));
+                log.debug(String.format("isCorrect: %s", isCorrect));
                 if (isCorrect) {
                     totalCorrect++;
                     historyQuiz.setUser(user);

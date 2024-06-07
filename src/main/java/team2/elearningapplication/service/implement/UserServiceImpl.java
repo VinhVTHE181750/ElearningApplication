@@ -32,8 +32,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
 
-    private static final String START_MAIL = START_MAIL;
-    private static final String END_MAIL = END_MAIL;
+    private static final String START_MAIL = "START... send mail";
+    private static final String END_MAIL = "END... send mail";
     private static final String VALUE_OF_EXPIRED = "Value of expired {}";
     private final IUserRepository userRepository;
     private final EmailService emailService;
@@ -257,7 +257,7 @@ public class UserServiceImpl implements IUserService {
     public ResponseCommon<ChangePasswordResponse> changePassword(ChangePasswordRequest changePasswordRequest) {
         try {
             String username = SecurityUtils.getUsernameAuth();
-            log(username);
+
             User user = userRepository.findByUsername(username).orElse(null);
             // if user is null -> tell error
             log.debug("change passsword with username{}", username);
