@@ -35,7 +35,7 @@ import java.util.Objects;
 @Slf4j
 public class CourseServiceImpl implements ICourseService {
 
-    private static final String ENROLL_FAILED = ENROLL_FAILED;
+    private static final String ENROLL_FAILED = "Enroll course failed: ";
     private final ICourseRepository courseRepository;
     private final ICategoryRepository categoryRepository;
     private final IUserRepository userRepository;
@@ -65,7 +65,7 @@ public class CourseServiceImpl implements ICourseService {
             course.setPrice(addCourseRequest.getPrice());
             course.setCreatedAt(LocalDateTime.now());
             Category category = categoryRepository.findCategoryByName(addCourseRequest.getCategory()).orElse(null);
-            log(category);
+
             course.setCategory(category);
             course.setUserCreated(user);
 
@@ -371,7 +371,7 @@ public class CourseServiceImpl implements ICourseService {
         try {
             EnrollCourseResponse enrollCourseResponse = new EnrollCourseResponse();
             Course courseBuy = courseRepository.findCourseById(enrollCourseRequest.getCourseId()).orElse(null);
-            log(courseBuy);
+
             Order order = new Order();
             order.setCreated_at(LocalDateTime.now());
             order.setUser(userRepository.findByUsername(enrollCourseRequest.getUsername()).orElse(null));
