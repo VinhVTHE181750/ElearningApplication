@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AnswerControllerTest extends Mockito {
+    public static final String ANSWER_ADDED_SUCCESSFULLY = "Answer added successfully";
+    public static final String ADD_ANSWER_FAILED = "Add answer failed";
+    public static final String ANSWER_UPDATED_SUCCESSFULLY = "Answer updated successfully";
+    public static final String UPDATE_ANSWER_FAILED = "Update answer failed";
 
 
     // Test method: addAnswer()
@@ -31,6 +35,8 @@ class AnswerControllerTest extends Mockito {
         ResponseEntity<ResponseCommon<AddAnswerResponse>> actualOutput = answerController.addAnswer(answerData);
         // Assert that the output is as expected.
         assertNotNull(actualOutput.getBody());
+        assertEquals(expectedOutput.getMessage(), actualOutput.getBody().getMessage());
+        assertEquals(expectedOutput.getCode(), actualOutput.getBody().getCode());
         assertEquals(expectedOutput.getData(), actualOutput.getBody().getData());
     }
 
@@ -65,7 +71,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerValidData() {
         // Case 1: All args are valid
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer added successfully", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_ADDED_SUCCESSFULLY, null);
         AnswerData answerData = new AnswerData("username", 1, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -73,7 +79,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerAnswerDataIsNull() {
         // Case 1.1: AnswerData is null
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer failed", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), ADD_ANSWER_FAILED, null);
         AnswerData answerData = null;
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -81,7 +87,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerUsernameIsEmpty() {
         // Case 2: username is empty
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer failed", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), ADD_ANSWER_FAILED, null);
         AnswerData answerData = new AnswerData("", 1, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -89,7 +95,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerUsernameContainsSpecialCharacters() {
         // Case 2.1: username contains special characters
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer failed", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), ADD_ANSWER_FAILED, null);
         AnswerData answerData = new AnswerData("user@name", 1, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -97,7 +103,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerUsernameIsNull() {
         // Case 2.2: username is null
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer failed", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), ADD_ANSWER_FAILED, null);
         AnswerData answerData = new AnswerData(null, 1, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -105,7 +111,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerQuestionIDZero() {
         // Case 3: questionID = 0
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer failed", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), ADD_ANSWER_FAILED, null);
         AnswerData answerData = new AnswerData("username", 0, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -113,7 +119,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerQuestionIDOne() {
         // Case 3.1: questionID = 1
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer added successfully", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_ADDED_SUCCESSFULLY, null);
         AnswerData answerData = new AnswerData("username", 1, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -121,7 +127,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerQuestionIDNegative() {
         // Case 3.2: questionID = -5
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer failed", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), ADD_ANSWER_FAILED, null);
         AnswerData answerData = new AnswerData("username", -5, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -129,7 +135,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerQuestionIDFive() {
         // Case 3.3: questionID = 5
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer added successfully", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_ADDED_SUCCESSFULLY, null);
         AnswerData answerData = new AnswerData("username", 5, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -137,7 +143,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerQuestionIDIsNotNumber() {
         // Case 3.4: questionID is not a number
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer failed", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), ADD_ANSWER_FAILED, null);
         AnswerData answerData = new AnswerData("username", 1, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -145,7 +151,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerAnswerNameIsEmpty() {
         // Case 4: answerName is empty
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer failed", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), ADD_ANSWER_FAILED, null);
         AnswerData answerData = new AnswerData("username", 1, "", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -153,7 +159,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerAnswerNameIsNull() {
         // Case 4.1: answerName is null
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer failed", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), ADD_ANSWER_FAILED, null);
         AnswerData answerData = new AnswerData("username", 1, null, true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -161,7 +167,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerIsCorrectTrue() {
         // Case 5: isCorrect = true
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer added successfully", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_ADDED_SUCCESSFULLY, null);
         AnswerData answerData = new AnswerData("username", 1, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -169,7 +175,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerIsCorrectFalse() {
         // Case 5.1: isCorrect = false
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer added successfully", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_ADDED_SUCCESSFULLY, null);
         AnswerData answerData = new AnswerData("username", 1, "answerName", false);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -177,7 +183,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerDeletedTrue() {
         // Case 6: deleted = true
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer added successfully", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_ADDED_SUCCESSFULLY, null);
         AnswerData answerData = new AnswerData("username", 1, "answerName", true);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -185,7 +191,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void addAnswerDeletedFalse() {
         // Case 6.1: deleted = false
-        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer added successfully", null);
+        ResponseCommon<AddAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_ADDED_SUCCESSFULLY, null);
         AnswerData answerData = new AnswerData("username", 1, "answerName", false);
         getAddAnswerResponse(answerData, expectedOutput);
     }
@@ -203,6 +209,8 @@ class AnswerControllerTest extends Mockito {
         ResponseEntity<ResponseCommon<UpdateAnswerResponse>> actualOutput = answerController.updateAnswer(updateAnswerRequest);
         // Assert that the output is as expected.
         assertNotNull(actualOutput.getBody());
+        assertEquals(expectedOutput.getMessage(), actualOutput.getBody().getMessage());
+        assertEquals(expectedOutput.getCode(), actualOutput.getBody().getCode());
         assertEquals(expectedOutput.getData(), actualOutput.getBody().getData());
     }
     // Input: UpdateAnswerRequest (username, questionID, answerID, answerContent, isCorrect, deleted)
@@ -250,7 +258,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerValidData() {
         // Case 1: All args are valid
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer updated successfully", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_UPDATED_SUCCESSFULLY, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -258,7 +266,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerUpdateAnswerRequestIsNull() {
         // Case 2: UpdateAnswerRequest is null
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = null;
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -266,7 +274,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerUsernameIsEmpty() {
         // Case 2: username is empty
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("", 1, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -274,7 +282,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerUsernameContainsSpecialCharacters() {
         // Case 2.1: username contains special characters
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("user@name", 1, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -282,7 +290,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerUsernameIsNull() {
         // Case 2.2: username is null
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest(null, 1, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -290,7 +298,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerQuestionIDZero() {
         // Case 3: questionID = 0
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 0, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -298,7 +306,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerQuestionIDOne() {
         // Case 3.1: questionID = 1
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer updated successfully", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_UPDATED_SUCCESSFULLY, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -306,7 +314,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerQuestionIDNegative() {
         // Case 3.2: questionID = -5
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", -5, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -314,7 +322,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerQuestionIDFive() {
         // Case 3.3: questionID = 5
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer updated successfully", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_UPDATED_SUCCESSFULLY, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 5, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -322,7 +330,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerAnswerIDZero() {
         // Case 4: answerID = 0
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 0, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -330,7 +338,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerAnswerIDOne() {
         // Case 4.1: answerID = 1
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer updated successfully", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_UPDATED_SUCCESSFULLY, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -338,7 +346,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerAnswerIDNegative() {
         // Case 4.2: answerID = -5
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, -5, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -346,7 +354,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerAnswerIDFive() {
         // Case 4.3: answerID = 5
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer updated successfully", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_UPDATED_SUCCESSFULLY, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 5, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -354,7 +362,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerAnswerContentIsEmpty() {
         // Case 5: answerContent is empty
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 1, "", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -362,7 +370,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerAnswerContentIsNull() {
         // Case 5.1: answerContent is null
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Update answer failed", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.FAIL.getCode(), UPDATE_ANSWER_FAILED, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 1, null, true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -370,7 +378,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerIsCorrectTrue() {
         // Case 6: isCorrect = true
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer updated successfully", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_UPDATED_SUCCESSFULLY, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -378,7 +386,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerIsCorrectFalse() {
         // Case 6.1: isCorrect = false
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer updated successfully", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_UPDATED_SUCCESSFULLY, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 1, "answerContent", false, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -386,7 +394,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerDeletedTrue() {
         // Case 7: deleted = true
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer updated successfully", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_UPDATED_SUCCESSFULLY, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 1, "answerContent", true, true);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
@@ -394,7 +402,7 @@ class AnswerControllerTest extends Mockito {
     @Test
     void updateAnswerDeletedFalse() {
         // Case 7.1: deleted = false
-        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Answer updated successfully", null);
+        ResponseCommon<UpdateAnswerResponse> expectedOutput = new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), ANSWER_UPDATED_SUCCESSFULLY, null);
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest("username", 1, 1, "answerContent", true, false);
         getUpdateAnswerResponse(updateAnswerRequest, expectedOutput);
     }
