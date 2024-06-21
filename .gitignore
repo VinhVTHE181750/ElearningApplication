@@ -43,3 +43,4 @@ build/sonar/report-task.txt
 *.bin
 *.bin
 *.uniqueId*
+/build

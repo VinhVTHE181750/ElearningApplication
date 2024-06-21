@@ -5,6 +5,13 @@ plugins {
 	id "org.sonarqube" version "5.0.0.4638"
 }
 
+sonar {
+  properties {
+    property "sonar.projectKey", "VinhVTHE181750_ElearningApplication_2a3b0851-c740-4bf0-8a2b-399bd95431c2"
+    property "sonar.projectName", "ElearningApplication"
+  }
+}
+
 group = 'team2'
 version = '0.0.1-SNAPSHOT'
 
