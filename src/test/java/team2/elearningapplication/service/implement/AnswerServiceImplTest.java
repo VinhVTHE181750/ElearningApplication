@@ -46,7 +46,7 @@ class AnswerServiceImplTest extends Mockito {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @BeforeAll
@@ -78,7 +78,7 @@ class AnswerServiceImplTest extends Mockito {
         return answers.get(id);
     }
 
-    void getAnswerById(GetAnswerByIdRequest request, ResponseCommon expectedResponse) {
+    void getAnswerById(GetAnswerByIdRequest request, ResponseCommon<GetAnswerByIdResponse> expectedResponse) {
 
         // call stack: answerService.getAnswerById(request) -> answerRepository.findAnswerById(id) -> answers.get(id)
         final int id = request.getId();
@@ -126,17 +126,17 @@ class AnswerServiceImplTest extends Mockito {
     }
 
     // on failure return this response
-    private static final ResponseCommon ANSWER_NOT_EXIST = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
+    private static final ResponseCommon<GetAnswerByIdResponse> ANSWER_NOT_EXIST = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
 
     // on success return code + data
 
 
     // on exception return this
-    private static final ResponseCommon EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete answer fail", null);
+    private static final ResponseCommon<GetAnswerByIdResponse> EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete answer fail", null);
 
 
     // create expected responses
-    private ResponseCommon expectedGetResponse(Answer answer) {
+    private ResponseCommon<GetAnswerByIdResponse> expectedGetResponse(Answer answer) {
         GetAnswerByIdResponse expectedGetResponse = new GetAnswerByIdResponse();
 
         expectedGetResponse.setId(answer.getId());
@@ -158,7 +158,7 @@ class AnswerServiceImplTest extends Mockito {
 
         // Offsetting by 1
         Answer answer = answers.get(request.getId() - 1);
-        ResponseCommon expectedResponse = expectedGetResponse(answer);
+        ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
 
 
         getAnswerById(request, expectedResponse);
@@ -190,7 +190,7 @@ class AnswerServiceImplTest extends Mockito {
         request.setId(5);
 
         Answer answer = answers.get(request.getId() - 1);
-        ResponseCommon expectedResponse = expectedGetResponse(answer);
+        ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
 
         getAnswerById(request, expectedResponse);
     }
@@ -202,7 +202,7 @@ class AnswerServiceImplTest extends Mockito {
         request.setId(20);
 
         Answer answer = answers.get(request.getId() - 1);
-        ResponseCommon expectedResponse = expectedGetResponse(answer);
+        ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
 
         getAnswerById(request, expectedResponse);
     }
@@ -240,24 +240,29 @@ class AnswerServiceImplTest extends Mockito {
         assertNull(response.getData());
     }
 
-    private final ResponseCommon QUESTION_NOT_EXIST = new ResponseCommon<>(ResponseCode.QUESTION_NOT_EXIST.getCode(), "Question not exist, cannot add answer to question", null);
-    private final ResponseCommon ADD_EXCEPTION =  new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer fail", null);
+    private final ResponseCommon<AddAnswerResponse> QUESTION_NOT_EXIST = new ResponseCommon<AddAnswerResponse>(ResponseCode.QUESTION_NOT_EXIST.getCode(), "Question not exist, cannot add answer to question", null);
+    private final ResponseCommon<AddAnswerResponse> ADD_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer fail", null);
 
-    void addAnswer(AnswerData answerData, ResponseCommon expectedResponse) {
+    void addAnswer(AnswerData answerData, ResponseCommon<AddAnswerResponse> expectedResponse) {
+
+        // reset mocks
         reset(answerRepository);
         reset(questionRepository);
+        reset(userRepository);
 
         // call stack: answerService.addAnswer(answerData) -> questionRepository.findQuestionById(id) -> questions.get(id)
         final int questionId = answerData.getQuestionID();
 
         when(questionRepository.findQuestionById(questionId)).then(invocation -> {
             if (questionId > 0 && questionId <= questions.size()) {
-                return questions.get(questionId - 1);
+                // Offset by 1
+                return Optional.of(questions.get(questionId - 1));
             } else {
-                return null;
+                return Optional.empty();
             }
         });
 
+        // call stack: answerService.addAnswer(answerData) -> userRepository.findByUsername(username) -> users.get(id)
         when(userRepository.findByUsername(answerData.getUsername())).then(invocation -> {
             for (User user : users) {
                 if (user.getUsername().equals(answerData.getUsername())) {
@@ -267,9 +272,11 @@ class AnswerServiceImplTest extends Mockito {
             }
             return Optional.empty();
         });
-        // call stack: answerService.addAnswer(answerData) -> answerRepository.save(answer) -> answerRepository.findAnswerById(id) -> answers.get(id)
+
 
         User u = userRepository.findByUsername(answerData.getUsername()).get();
+
+        // call stack: answerService.addAnswer(answerData) -> answerRepository.save(answer) -> answerRepository.findAnswerById(id) -> answers.get(id)
         // mock answer
         Answer answer = new Answer()
                 .setAnswerContent(answerData.getAnswerName())
@@ -279,7 +286,15 @@ class AnswerServiceImplTest extends Mockito {
                 .setUserUpdated(u)
                 .setDeleted(false);
 
-        when(answerRepository.save(answer)).thenReturn(answer);
+        // mock save answer
+        when(answerRepository.save(answer)).then(invocation -> {
+            answers.add(answer);
+            return answer;
+        });
+
+        when(answerRepository.findAnswerById(answer.getId())).then(invocation -> {
+            return Optional.of(answer);
+        });
         // call stack: answerService.addAnswer(answerData) -> userRepository.findUserById(id) -> users.get(id)
 
         var response = answerService.addAnswer(answerData);
@@ -289,9 +304,10 @@ class AnswerServiceImplTest extends Mockito {
         assertEquals(expectedResponse.getCode(), response.getCode());
         assertEquals(expectedResponse.getMessage(), response.getMessage());
 //        assertEquals(expectedResponse.getData(), response.getData());
-        if(response.getData() != null && expectedResponse.getData() != null) {
-            AddAnswerResponse expectedData = (AddAnswerResponse) expectedResponse.getData();
-            AddAnswerResponse actualData = (AddAnswerResponse) response.getData();
+        if (response.getData() != null && expectedResponse.getData() != null) {
+
+            AddAnswerResponse expectedData = expectedResponse.getData();
+            AddAnswerResponse actualData = response.getData();
 
             assertEquals(expectedData.getId(), actualData.getId());
             assertEquals(expectedData.getAnswerContent(), actualData.getAnswerContent());
@@ -302,22 +318,132 @@ class AnswerServiceImplTest extends Mockito {
     }
 
     private ResponseCommon<AddAnswerResponse> expectedAddResponse(AnswerData answerData, User u) {
-        AddAnswerResponse expectedAddResponse = new AddAnswerResponse();
 
+        // create expected response
+        AddAnswerResponse expectedAddResponse = new AddAnswerResponse();
         expectedAddResponse.setId(answerData.getQuestionID());
         expectedAddResponse.setAnswerContent(answerData.getAnswerName());
         expectedAddResponse.setCorrect(answerData.isCorrect());
         expectedAddResponse.setCreatedBy(u.getUsername());
         expectedAddResponse.setUpdatedBy(u.getUsername());
 
-        return new ResponseCommon<AddAnswerResponse>(expectedAddResponse);
+        return new ResponseCommon<AddAnswerResponse>(ResponseCode.SUCCESS.getCode(), "Add answer success", expectedAddResponse);
     }
 
     // BVA (question): valid boundary (1)
+    @Test
+    void addAnswerONE() {
+        AnswerData answerData = new AnswerData();
+        answerData.setUsername("Test User 1");
+        answerData.setQuestionID(1);
+        answerData.setAnswerName("Test Answer 1");
+        answerData.setCorrect(true);
 
+        User u = users.get(0);
+        ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
+
+        addAnswer(answerData, expectedResponse);
+    }
+
+    // BVA (question id): invalid boundary (0)
+    @Test
+    void addAnswerQuestionIDZERO() {
+        AnswerData answerData = new AnswerData();
+        answerData.setUsername("Test User 1");
+        answerData.setQuestionID(0);
+        answerData.setAnswerName("Test Answer 1");
+        answerData.setCorrect(true);
+
+        addAnswer(answerData, QUESTION_NOT_EXIST);
+    }
 
     void updateAnswer() {
     }
+
+    // EP (question id): invalid (-5)
+    @Test
+    void addAnswerQuestionIDNEGATIVE() {
+        AnswerData answerData = new AnswerData();
+        answerData.setUsername("Test User 1");
+        answerData.setQuestionID(-5);
+        answerData.setAnswerName("Test Answer 1");
+        answerData.setCorrect(true);
+
+        addAnswer(answerData, QUESTION_NOT_EXIST);
+    }
+
+    // EP (question id): valid (3)
+    @Test
+    void addAnswerQuestionIDTHREE() {
+        AnswerData answerData = new AnswerData();
+        answerData.setUsername("Test User 1");
+        answerData.setQuestionID(3);
+        answerData.setAnswerName("Test Answer 1");
+        answerData.setCorrect(true);
+
+        User u = users.get(0);
+        ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
+
+        addAnswer(answerData, expectedResponse);
+    }
+
+    // BVA (question id): valid boundary (5)
+    @Test
+    void addAnswerQuestionIDFIVE() {
+        AnswerData answerData = new AnswerData();
+        answerData.setUsername("Test User 1");
+        answerData.setQuestionID(5);
+        answerData.setAnswerName("Test Answer 1");
+        answerData.setCorrect(true);
+
+        User u = users.get(0);
+        ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
+
+        addAnswer(answerData, expectedResponse);
+    }
+
+    // BVA (question id): invalid boundary (6)
+    @Test
+    void addAnswerQuestionIDSIX() {
+        AnswerData answerData = new AnswerData();
+        answerData.setUsername("Test User 1");
+        answerData.setQuestionID(6);
+        answerData.setAnswerName("Test Answer 1");
+        answerData.setCorrect(true);
+
+        addAnswer(answerData, QUESTION_NOT_EXIST);
+    }
+
+    // EP (question id): invalid (10)
+    @Test
+    void addAnswerQuestionIDTEN() {
+        AnswerData answerData = new AnswerData();
+        answerData.setUsername("Test User 1");
+        answerData.setQuestionID(10);
+        answerData.setAnswerName("Test Answer 1");
+        answerData.setCorrect(true);
+
+        addAnswer(answerData, QUESTION_NOT_EXIST);
+    }
+
+    @Test
+    void addAnswer_ExceptionThrown() {
+        AnswerData answerData = new AnswerData();
+        answerData.setUsername("Test User 1");
+        answerData.setQuestionID(1);
+        answerData.setAnswerName("Test Answer 1");
+        answerData.setCorrect(true);
+
+        // mock the event: db error -> findQuestionById() throws exception
+        when(questionRepository.findQuestionById(answerData.getQuestionID())).thenThrow(new RuntimeException("Test Exception"));
+
+        var response = answerService.addAnswer(answerData);
+
+        assertEquals(ADD_EXCEPTION.getCode(), response.getCode());
+        assertEquals(ADD_EXCEPTION.getMessage(), response.getMessage());
+        assertNull(response.getData());
+    }
+
 
 
     void deleteAnswer() {
