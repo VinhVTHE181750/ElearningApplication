@@ -11,8 +11,10 @@ import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
 import team2.elearningapplication.dto.request.admin.answer.AnswerData;
 import team2.elearningapplication.dto.request.admin.answer.GetAnswerByIdRequest;
+import team2.elearningapplication.dto.request.admin.answer.UpdateAnswerRequest;
 import team2.elearningapplication.dto.response.admin.answer.AddAnswerResponse;
 import team2.elearningapplication.dto.response.admin.answer.GetAnswerByIdResponse;
+import team2.elearningapplication.dto.response.admin.answer.UpdateAnswerResponse;
 import team2.elearningapplication.entity.Answer;
 import team2.elearningapplication.entity.Question;
 import team2.elearningapplication.entity.User;
@@ -53,7 +55,7 @@ class AnswerServiceImplTest extends Mockito {
     static void setAnswers() {
         answers = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            answers.add(new Answer().setId(i + 1).setAnswerContent("Test Answer " + (i + 1)).setUserCreated(users.get(i % 5)).setDeleted(false).setUserUpdated(users.get(i % 5)).setCorrect(i % 4 == 0).setQuestionId(i % 5));
+            answers.add(new Answer().setId(i + 1).setAnswerContent("Test Answer " + (i + 1)).setUserCreated(users.get(i % 5)).setDeleted(false).setUserUpdated(users.get(i % 5)).setCorrect(i % 4 == 0).setQuestionId(i % 5 + 1));
         }
     }
 
@@ -357,9 +359,6 @@ class AnswerServiceImplTest extends Mockito {
         addAnswer(answerData, QUESTION_NOT_EXIST);
     }
 
-    void updateAnswer() {
-    }
-
     // EP (question id): invalid (-5)
     @Test
     void addAnswerQuestionIDNEGATIVE() {
@@ -445,7 +444,106 @@ class AnswerServiceImplTest extends Mockito {
     }
 
 
+    void updateAnswer(UpdateAnswerRequest request, ResponseCommon<UpdateAnswerResponse> expectedResponse) {
+        when(answerRepository.findAnswerByQuestionIdAndId(request.getQuestionID(), request.getAnswerID())).then(invocation -> {
+            int questionId = request.getQuestionID();
+            int answerId = request.getAnswerID();
+
+            for (Answer answer : answers) {
+                if (questionId == answer.getQuestionId() && answerId == answer.getId()) {
+                    return Optional.of(answer);
+                }
+            }
+            return Optional.empty();
+        });
+
+        when(userRepository.findByUsername(request.getUsername())).then(invocation -> {
+            for (User user : users) {
+                if (user.getUsername().equals(request.getUsername())) {
+                    return Optional.of(user);
+                }
+            }
+            return Optional.empty();
+        });
+
+        var response = answerService.updateAnswer(request);
+
+        verify(answerRepository, times(1)).findAnswerByQuestionIdAndId(request.getQuestionID(), request.getAnswerID());
+
+        // has response
+        assertNotNull(response);
+
+        // code
+        assertEquals(expectedResponse.getCode(), response.getCode());
+
+        // message
+        assertEquals(expectedResponse.getMessage(), response.getMessage());
+
+        // data: UpdateAnswerResponse
+        if (response.getData() != null && expectedResponse.getData() != null) {
+            UpdateAnswerResponse expectedData = (UpdateAnswerResponse) expectedResponse.getData();
+            UpdateAnswerResponse actualData = (UpdateAnswerResponse) response.getData();
+
+            assertEquals(expectedData.getQuestionID(), actualData.getQuestionID());
+            assertEquals(expectedData.getAnswerID(), actualData.getAnswerID());
+            assertEquals(expectedData.getAnswerContent(), actualData.getAnswerContent());
+            assertEquals(expectedData.isCorrect(), actualData.isCorrect());
+            assertEquals(expectedData.getCreatedBy(), actualData.getCreatedBy());
+            assertEquals(expectedData.getUpdatedBy(), actualData.getUpdatedBy());
+        }
+
+    }
+
+    private final ResponseCommon<UpdateAnswerResponse> ANSWER_NOT_EXIST_UPDATE = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist in question", null);
+
+
+    private ResponseCommon<UpdateAnswerResponse> expectedUpdateResponse(Answer answer) {
+        UpdateAnswerResponse expectedUpdateResponse = new UpdateAnswerResponse();
+
+        expectedUpdateResponse.setQuestionID(answer.getQuestionId());
+        expectedUpdateResponse.setAnswerID(answer.getId());
+        expectedUpdateResponse.setAnswerContent(answer.getAnswerContent());
+        expectedUpdateResponse.setCorrect(answer.isCorrect());
+        expectedUpdateResponse.setCreatedBy(answer.getUserCreated().getUsername());
+        expectedUpdateResponse.setUpdatedBy(answer.getUserUpdated().getUsername());
+
+        return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Update answer success", expectedUpdateResponse);
+    }
+
+    // BVA (answer): valid boundary (1)
+    @Test
+    void updateAnswerONE() {
+        UpdateAnswerRequest request = new UpdateAnswerRequest();
+        request.setUsername("Test User 1");
+        request.setQuestionID(1);
+        request.setAnswerID(1);
+        request.setAnswerContent("Test Answer 1");
+        request.setCorrect(true);
+
+        Answer answer = answers.get(0);
+        ResponseCommon<UpdateAnswerResponse> expectedResponse = expectedUpdateResponse(answer);
+        System.out.println("Expected: a" + answer.getId() + " q" + answer.getQuestionId());
+
+
+        updateAnswer(request, expectedResponse);
+    }
+
+    // BVA (answer): invalid boundary (0)
+    @Test
+    void updateAnswerZERO() {
+        UpdateAnswerRequest request = new UpdateAnswerRequest();
+        request.setUsername("Test User 1");
+        request.setQuestionID(1);
+        request.setAnswerID(0);
+        request.setAnswerContent("Test Answer 1");
+        request.setCorrect(true);
+
+        updateAnswer(request, ANSWER_NOT_EXIST_UPDATE);
+    }
+
 
     void deleteAnswer() {
     }
+
+
 }
