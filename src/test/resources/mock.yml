@@ -20,7 +20,7 @@ users:
     password: "testpassword1"
     email: "testuser1@mail.com"
     phone: "1234567890"
-    role: "ROLE_USER"
+    role: "ADMIN"
     created_At: "2021-01-01T00:00:00"
     full_name: "Test User 1"
     gender: "MALE"
@@ -35,7 +35,7 @@ users:
     password: "testpassword2"
     email: "testuser2@mail.com"
     phone: "1234567890"
-    role: "ROLE_USER"
+    role: "STUDENT"
     created_At: "2021-01-01T00:00:00"
     full_name: "Test User 2"
     gender: "FEMALE"
@@ -51,98 +51,158 @@ answers:
     deleted: false
     correct: false
     questionId: 1
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 2
     answerContent: "Answer 2 of Q1"
     deleted: false
     correct: false
     questionId: 1
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 3
     answerContent: "Answer 3 of Q1"
     deleted: false
     correct: false
     questionId: 1
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 4
     answerContent: "Answer 4 of Q1"
     deleted: false
     correct: true
     questionId: 1
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 5
     answerContent: "Answer 1 of Q2"
     deleted: false
     correct: false
     questionId: 2
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 6
     answerContent: "Answer 2 of Q2"
     deleted: false
     correct: false
     questionId: 2
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 7
     answerContent: "Answer 3 of Q2"
     deleted: false
     correct: false
     questionId: 2
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 8
     answerContent: "Answer 4 of Q2"
     deleted: false
     correct: true
     questionId: 2
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 9
     answerContent: "Answer 1 of Q3"
     deleted: false
     correct: false
     questionId: 3
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 10
     answerContent: "Answer 2 of Q3"
     deleted: false
     correct: false
     questionId: 3
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 11
     answerContent: "Answer 3 of Q3"
     deleted: false
     correct: false
     questionId: 3
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 12
     answerContent: "Answer 4 of Q3"
     deleted: false
     correct: true
     questionId: 3
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 13
     answerContent: "Answer 1 of Q4"
     deleted: false
     correct: false
     questionId: 4
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 14
     answerContent: "Answer 2 of Q4"
     deleted: false
     correct: false
     questionId: 4
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 15
     answerContent: "Answer 3 of Q4"
     deleted: false
     correct: false
     questionId: 4
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 16
     answerContent: "Answer 4 of Q4"
     deleted: false
     correct: true
     questionId: 4
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 17
     answerContent: "Answer 1 of Q5"
     deleted: false
     correct: false
     questionId: 5
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 18
     answerContent: "Answer 2 of Q5"
     deleted: false
     correct: false
     questionId: 5
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 19
     answerContent: "Answer 3 of Q5"
     deleted: false
     correct: false
     questionId: 5
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
   - id: 20
     answerContent: "Answer 4 of Q5"
     deleted: false
     correct: true
     questionId: 5
+    updatedAt: "2021-01-01T00:00:00"
+    createdBy: 1
+    updatedBy: 1
