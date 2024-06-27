@@ -3,10 +3,15 @@ package team2.elearningapplication.service.implement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.yaml.snakeyaml.Yaml;
 import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
 import team2.elearningapplication.dto.request.admin.answer.AnswerData;
@@ -22,7 +27,10 @@ import team2.elearningapplication.repository.IAnswerRepository;
 import team2.elearningapplication.repository.IQuestionRepository;
 import team2.elearningapplication.repository.IUserRepository;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,9 +61,36 @@ class AnswerServiceImplTest extends Mockito {
 
     @BeforeAll
     static void setAnswers() {
-        answers = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            answers.add(new Answer().setId(i + 1).setAnswerContent("Test Answer " + (i + 1)).setUserCreated(users.get(i % 5)).setDeleted(false).setUserUpdated(users.get(i % 5)).setCorrect(i % 4 == 0).setQuestionId(i % 5 + 1));
+        Yaml yaml = new Yaml();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("mock.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            // Now you can use the data from the YAML file
+            answers = new ArrayList<>();
+            // Assuming yamlData contains a list of answers
+            List<Map<String, Object>> yamlAnswers = (List<Map<String, Object>>) yamlData.get("answers");
+            for (Map<String, Object> yamlAnswer : yamlAnswers) {
+                Answer answer = new Answer();
+                // Assuming each answer has properties: id, answerContent, userCreated, deleted, userUpdated, correct, questionId
+                answer.setId((Integer) yamlAnswer.get("id"));
+                answer.setAnswerContent((String) yamlAnswer.get("answerContent"));
+                // For userCreated and userUpdated, you might need to fetch the User object from users list or create a new User object based on the data in yamlAnswer
+                // For now, let's assume userCreated and userUpdated are just strings
+//                answer.setUserCreated((String) yamlAnswer.get("userCreated"));
+                answer.setDeleted((Boolean) yamlAnswer.get("deleted"));
+//                answer.setUserUpdated((String) yamlAnswer.get("userUpdated"));
+                answer.setCorrect((Boolean) yamlAnswer.get("correct"));
+                answer.setQuestionId((Integer) yamlAnswer.get("questionId"));
+                answers.add(answer);
+            }
+            answers.forEach(a -> {
+                System.out.println("#" + a.getId());
+                System.out.println("Answer: " + a.getAnswerContent());
+                System.out.println("Question ID: " + a.getQuestionId());
+                System.out.println("Correct: " + a.isCorrect());
+                System.out.println("Deleted: " + a.isDeleted());
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -74,7 +109,6 @@ class AnswerServiceImplTest extends Mockito {
             users.add(new User().setId(i + 1).setUsername("Test User " + (i + 1)));
         }
     }
-
 
     private Answer getAnswer(int id) {
         return answers.get(id);
@@ -127,16 +161,16 @@ class AnswerServiceImplTest extends Mockito {
 
     }
 
-    // on failure return this response
+    // on failure return this
     private static final ResponseCommon<GetAnswerByIdResponse> ANSWER_NOT_EXIST = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
 
-    // on success return code + data
 
 
     // on exception return this
     private static final ResponseCommon<GetAnswerByIdResponse> EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete answer fail", null);
 
 
+    // on success return code + data
     // create expected responses
     private ResponseCommon<GetAnswerByIdResponse> expectedGetResponse(Answer answer) {
         GetAnswerByIdResponse expectedGetResponse = new GetAnswerByIdResponse();
@@ -241,6 +275,8 @@ class AnswerServiceImplTest extends Mockito {
         assertEquals(EXCEPTION.getMessage(), response.getMessage());
         assertNull(response.getData());
     }
+
+
 
     private final ResponseCommon<AddAnswerResponse> QUESTION_NOT_EXIST = new ResponseCommon<AddAnswerResponse>(ResponseCode.QUESTION_NOT_EXIST.getCode(), "Question not exist, cannot add answer to question", null);
     private final ResponseCommon<AddAnswerResponse> ADD_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer fail", null);
