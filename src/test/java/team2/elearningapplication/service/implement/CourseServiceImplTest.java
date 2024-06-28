@@ -12,9 +12,12 @@ import org.mockito.MockitoAnnotations;
 import org.yaml.snakeyaml.Yaml;
 import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
+import team2.elearningapplication.dto.request.admin.course.AddCourseRequest;
+import team2.elearningapplication.dto.request.admin.course.DeleteCourseRequest;
 import team2.elearningapplication.dto.request.admin.course.GetCourseByIdRequest;
 import team2.elearningapplication.dto.request.admin.course.UpdateCourseRequest;
 import team2.elearningapplication.dto.response.admin.course.AddCourseResponse;
+import team2.elearningapplication.dto.response.admin.course.DeleteCourseResponse;
 import team2.elearningapplication.dto.response.admin.course.GetCourseByIdResponse;
 import team2.elearningapplication.dto.response.admin.course.UpdateCourseResponse;
 import team2.elearningapplication.entity.*;
@@ -33,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CourseServiceImplTest extends Mockito {
     // respones
     private final ResponseCommon<GetCourseByIdResponse> COURSE_NOT_EXIST = new ResponseCommon<>(ResponseCode.COURSE_NOT_EXIST, null);
+    private final ResponseCommon<DeleteCourseResponse> DELETE_COURSE_NOT_EXIST = new ResponseCommon<>(ResponseCode.COURSE_NOT_EXIST, null);
+    private final ResponseCommon<UpdateCourseResponse> UPDATE_COURSE_NOT_EXIST = new ResponseCommon<>(ResponseCode.COURSE_NOT_EXIST, null);
     // mock list to replace database
     private static ArrayList<Course> courses = new ArrayList<>();
     private static ArrayList<Category> categorys = new ArrayList<>();
@@ -71,7 +76,7 @@ class CourseServiceImplTest extends Mockito {
                 course.setName((String) c.get("courseName"));
                 course.setDescription((String) c.get("description"));
                 course.setPrice((Integer) c.get("price"));
-                course.setCategory(categorys.get((Integer) c.get("id")));
+                course.setCategory(categorys.get((Integer) c.get("id") - 1));
                 course.setLinkThumnail((String) c.get("link_image"));
                 // bo qua cot created_atcreated_by, updated_by
                 courses.add(course);
@@ -83,32 +88,32 @@ class CourseServiceImplTest extends Mockito {
         }
     }
 
-//    void addCourse(CourseData courseData, ResponseCommon<AddCourseResponse> expectedResponse) {
-//        reset(courseRepository);
-//        when(courseRepository.save(any(Course.class))).then(invocation -> {
-//            Course course = invocation.getArgument(0);
-//            course.setId(courses.size() + 1);
-//            courses.add(course);
-//            return course;
-//        });
-//        var response = courseService.addCourse(courseData);
-//        verify(courseRepository, times(1)).save(any(Course.class));
-//        assertNotNull(response);
-//        assertEquals(expectedResponse.getCode(), response.getCode());
-//        assertEquals(expectedResponse.getMessage(), response.getMessage());
-//        // data: AddCourseResponse
-//        if(response.getData() != null && expectedResponse.getData() != null){
-//            AddCourseResponse expectedData = (AddCourseResponse) expectedResponse.getData();
-//            AddCourseResponse actualData = (AddCourseResponse) response.getData();
-//
-//            assertEquals(expectedData.getCourseID(), actualData.getCourseID());
-//            assertEquals(expectedData.getCourseName(), actualData.getCourseName());
-//            assertEquals(expectedData.getDescription(), actualData.getDescription());
-//            assertEquals(expectedData.getPrice(), actualData.getPrice());
-//            assertEquals(expectedData.getCategory(), actualData.getCategory());
-//            assertEquals(expectedData.getLinkThumail(), actualData.getLinkThumail());
-//        }
-//    };
+    void addCourse(AddCourseRequest request, ResponseCommon<AddCourseResponse> expectedResponse) {
+        reset(courseRepository);
+        when(courseRepository.save(any(Course.class))).then(invocation -> {
+            Course course = invocation.getArgument(0);
+            course.setId(courses.size() + 1);
+            courses.add(course);
+            return course;
+        });
+        var response = courseService.addCourse(request);
+        verify(courseRepository, times(1)).save(any(Course.class));
+        assertNotNull(response);
+        assertEquals(expectedResponse.getCode(), response.getCode());
+        assertEquals(expectedResponse.getMessage(), response.getMessage());
+        // data: AddCourseResponse
+        if(response.getData() != null && expectedResponse.getData() != null){
+            AddCourseResponse expectedData = (AddCourseResponse) expectedResponse.getData();
+            AddCourseResponse actualData = (AddCourseResponse) response.getData();
+
+            assertEquals(expectedData.getCourseID(), actualData.getCourseID());
+            assertEquals(expectedData.getCourseName(), actualData.getCourseName());
+            assertEquals(expectedData.getDescription(), actualData.getDescription());
+            assertEquals(expectedData.getPrice(), actualData.getPrice());
+            assertEquals(expectedData.getCategory(), actualData.getCategory());
+            assertEquals(expectedData.getLinkThumail(), actualData.getLinkThumail());
+        }
+    };
 
     void updateCourse(UpdateCourseRequest request, ResponseCommon<UpdateCourseResponse> expectedResponse) {
         when(courseRepository.findCourseById(request.getCourseID())).then(invocation -> {
@@ -158,8 +163,45 @@ class CourseServiceImplTest extends Mockito {
         expectedResponse.setLinkThumail(course.getLinkThumnail());
         return new ResponseCommon<>(expectedResponse);
     }
-    @Test
-    void deleteCourse() {
+    private ResponseCommon<DeleteCourseResponse> expectedDeleteResponse(Course course){
+        DeleteCourseResponse expectedResponse = new DeleteCourseResponse();
+
+        expectedResponse.setCourseID(course.getId());
+        expectedResponse.setCourseName(course.getName());
+        expectedResponse.setDescription(course.getDescription());
+        expectedResponse.setPrice(course.getPrice());
+        expectedResponse.setCategory(course.getCategory());
+        expectedResponse.setLinkThumail(course.getLinkThumnail());
+        return new ResponseCommon<>(expectedResponse);
+    }
+
+    void deleteCourse(DeleteCourseRequest request, ResponseCommon<DeleteCourseResponse> expectedResponse) {
+        final int id = request.getCourseID();
+        reset(courseRepository);
+        when(courseRepository.findCourseById(id)).then(invocation -> {
+            if(id > 0 && id <= courses.size()){
+                return Optional.of(getCourse(id - 1));
+            } else{
+                return Optional.empty();
+            }
+        });
+        var response = courseService.deleteCourse(request);
+        verify(courseRepository, times(1)).findCourseById(id);
+        assertNotNull(response);
+        assertEquals(expectedResponse.getCode(), response.getCode());
+        assertEquals(expectedResponse.getMessage(), response.getMessage());
+        // data: Course
+        if(response.getData() != null && expectedResponse.getData() != null){
+            DeleteCourseResponse expectedData =  expectedResponse.getData();
+            DeleteCourseResponse actualData =  response.getData();
+
+            assertEquals(expectedData.getCourseID(), actualData.getCourseID());
+            assertEquals(expectedData.getCourseName(), actualData.getCourseName());
+            assertEquals(expectedData.getDescription(), actualData.getDescription());
+            assertEquals(expectedData.getPrice(), actualData.getPrice());
+            assertEquals(expectedData.getCategory(), actualData.getCategory());
+            assertEquals(expectedData.getLinkThumail(), actualData.getLinkThumail());
+        }
     }
     private Course getCourse(int id){
         return courses.get(id);
@@ -233,4 +275,31 @@ class CourseServiceImplTest extends Mockito {
             getCourseById(request, expectedResponse);
         }
     }
+    @ParameterizedTest
+    @MethodSource("provideIds")
+    void deleteCourse(int id){
+        DeleteCourseRequest request = new DeleteCourseRequest();
+        request.setCourseID(id);
+        if (id < 1 || id > courses.size()) {
+            deleteCourse(request, DELETE_COURSE_NOT_EXIST);
+        } else {
+            Course course = courses.get(id - 1);
+            ResponseCommon<DeleteCourseResponse> expectedResponse = expectedDeleteResponse(course);
+            deleteCourse(request, expectedResponse);
+        }
+    };
+    @ParameterizedTest
+    @MethodSource("provideIds")
+    void updateCourse(int id){
+        UpdateCourseRequest request = new UpdateCourseRequest();
+        request.setCourseID(id);
+        if(id < 1 || id > courses.size()){
+            updateCourse(request, UPDATE_COURSE_NOT_EXIST);
+        }
+        else{
+            Course course = courses.get(id - 1);
+            ResponseCommon<UpdateCourseResponse> expectedResponse = expectedUpdateResponse(course);
+            updateCourse(request, expectedResponse);
+        }
+    };
 }
