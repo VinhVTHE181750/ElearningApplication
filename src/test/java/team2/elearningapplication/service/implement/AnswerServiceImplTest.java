@@ -2,11 +2,13 @@ package team2.elearningapplication.service.implement;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.yaml.snakeyaml.Yaml;
 import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
 import team2.elearningapplication.dto.request.admin.answer.AnswerData;
@@ -22,18 +24,34 @@ import team2.elearningapplication.repository.IAnswerRepository;
 import team2.elearningapplication.repository.IQuestionRepository;
 import team2.elearningapplication.repository.IUserRepository;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AnswerServiceImplTest extends Mockito {
 
 
+    // responses
+    private final ResponseCommon<GetAnswerByIdResponse> ANSWER_NOT_EXIST = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
+    private final ResponseCommon<GetAnswerByIdResponse> GET_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete answer fail", null);
+
+    private final ResponseCommon<AddAnswerResponse> QUESTION_NOT_EXIST = new ResponseCommon<AddAnswerResponse>(ResponseCode.QUESTION_NOT_EXIST.getCode(), "Question not exist, cannot add answer to question", null);
+    private final ResponseCommon<AddAnswerResponse> ADD_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer fail", null);
+    private final ResponseCommon<UpdateAnswerResponse> ANSWER_NOT_EXIST_UPDATE = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist in question", null);
+
+    // response of deleteAnswer
+
+    // mock list to replace database
     private static ArrayList<Answer> answers;
     private static ArrayList<Question> questions;
     private static ArrayList<User> users;
 
+    // mock service
     @InjectMocks
     AnswerServiceImpl answerService;
 
@@ -46,40 +64,58 @@ class AnswerServiceImplTest extends Mockito {
     @Mock
     IUserRepository userRepository;
 
+    // test setup methods
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @BeforeAll
-    static void setAnswers() {
-        answers = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            answers.add(new Answer().setId(i + 1).setAnswerContent("Test Answer " + (i + 1)).setUserCreated(users.get(i % 5)).setDeleted(false).setUserUpdated(users.get(i % 5)).setCorrect(i % 4 == 0).setQuestionId(i % 5 + 1));
+    static void setData() {
+        Yaml yaml = new Yaml();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("data.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            users = new ArrayList<User>();
+            List<Map<String, Object>> yamlUsers = (List<Map<String, Object>>) yamlData.get("users");
+            for (Map<String, Object> yamlUser : yamlUsers) {
+                User user = new User();
+                user.setId((Integer) yamlUser.get("id"));
+                user.setUsername((String) yamlUser.get("username"));
+                users.add(user);
+            }
+
+            questions = new ArrayList<Question>();
+            List<Map<String, Object>> yamlQuestions = (List<Map<String, Object>>) yamlData.get("questions");
+            for (Map<String, Object> yamlQuestion : yamlQuestions) {
+                Question question = new Question();
+                question.setId((Integer) yamlQuestion.get("id"));
+                question.setQuestionName((String) yamlQuestion.get("questionName"));
+                questions.add(question);
+            }
+
+            answers = new ArrayList<Answer>();
+            List<Map<String, Object>> yamlAnswers = (List<Map<String, Object>>) yamlData.get("answers");
+            for (Map<String, Object> yamlAnswer : yamlAnswers) {
+                Answer answer = new Answer();
+                answer.setId((Integer) yamlAnswer.get("id"));
+                answer.setAnswerContent((String) yamlAnswer.get("answerContent"));
+                answer.setUserCreated(users.get((int) yamlAnswer.get("createdBy")));
+                answer.setDeleted((Boolean) yamlAnswer.get("deleted"));
+                answer.setUserUpdated(users.get((int) yamlAnswer.get("updatedBy")));
+                answer.setCorrect((Boolean) yamlAnswer.get("correct"));
+                answer.setQuestionId((Integer) yamlAnswer.get("questionId"));
+                answers.add(answer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
-    @BeforeAll
-    static void setQuestions() {
-        questions = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            questions.add(new Question().setId(i + 1).setQuestionName("Test Question " + (i + 1)));
-        }
-    }
-
-    @BeforeAll
-    static void setUsers() {
-        users = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            users.add(new User().setId(i + 1).setUsername("Test User " + (i + 1)));
-        }
-    }
-
 
     private Answer getAnswer(int id) {
         return answers.get(id);
     }
 
+    // base test method
     void getAnswerById(GetAnswerByIdRequest request, ResponseCommon<GetAnswerByIdResponse> expectedResponse) {
 
         // call stack: answerService.getAnswerById(request) -> answerRepository.findAnswerById(id) -> answers.get(id)
@@ -127,17 +163,7 @@ class AnswerServiceImplTest extends Mockito {
 
     }
 
-    // on failure return this response
-    private static final ResponseCommon<GetAnswerByIdResponse> ANSWER_NOT_EXIST = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
-
-    // on success return code + data
-
-
-    // on exception return this
-    private static final ResponseCommon<GetAnswerByIdResponse> EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete answer fail", null);
-
-
-    // create expected responses
+    // generate expected response
     private ResponseCommon<GetAnswerByIdResponse> expectedGetResponse(Answer answer) {
         GetAnswerByIdResponse expectedGetResponse = new GetAnswerByIdResponse();
 
@@ -152,98 +178,33 @@ class AnswerServiceImplTest extends Mockito {
         return new ResponseCommon<>(expectedGetResponse);
     }
 
-    // BVA (answer): valid boundary (1)
-    @Test
-    void getAnswerByIdONE() {
-        GetAnswerByIdRequest request = new GetAnswerByIdRequest();
-        request.setId(1);
-
-        // Offsetting by 1
-        Answer answer = answers.get(request.getId() - 1);
-        ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
-
-
-        getAnswerById(request, expectedResponse);
+    static Stream<Integer> provideIDs() {
+        Yaml yaml = new Yaml();
+        List<Integer> listIDs = new ArrayList<>();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("test-cases.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            Map<String, List<Integer>> yamlTestCases = (Map<String, List<Integer>>) yamlData.get("getAnswerById");
+            listIDs = yamlTestCases.get("id");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listIDs.stream();
     }
 
-    // BVA (answer id): invalid boundary (0)
-    @Test
-    void getAnswerByIdZERO() {
+    // parameterized test method
+    @ParameterizedTest
+    @MethodSource("provideIDs")
+    void getAnswerByID(int id) {
         GetAnswerByIdRequest request = new GetAnswerByIdRequest();
-        request.setId(0);
-
-        getAnswerById(request, ANSWER_NOT_EXIST);
+        request.setId(id);
+        if (id < 1 || id > answers.size()) {
+            getAnswerById(request, ANSWER_NOT_EXIST);
+        } else {
+            Answer answer = answers.get(id - 1);
+            ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
+            getAnswerById(request, expectedResponse);
+        }
     }
-
-
-    // EP (answer id): invalid (-5)
-    @Test
-    void getAnswerByIdNEGATIVE() {
-        GetAnswerByIdRequest request = new GetAnswerByIdRequest();
-        request.setId(-5);
-
-        getAnswerById(request, ANSWER_NOT_EXIST);
-    }
-
-    // EP (answer id): valid (5)
-    @Test
-    void getAnswerByIdFIVE() {
-        GetAnswerByIdRequest request = new GetAnswerByIdRequest();
-        request.setId(5);
-
-        Answer answer = answers.get(request.getId() - 1);
-        ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
-
-        getAnswerById(request, expectedResponse);
-    }
-
-    // BVA (answer id): valid boundary (20)
-    @Test
-    void getAnswerByIdTWENTY() {
-        GetAnswerByIdRequest request = new GetAnswerByIdRequest();
-        request.setId(20);
-
-        Answer answer = answers.get(request.getId() - 1);
-        ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
-
-        getAnswerById(request, expectedResponse);
-    }
-
-    // BVA (answer id): invalid boundary (21)
-    @Test
-    void getAnswerByIdTWENTYONE() {
-        GetAnswerByIdRequest request = new GetAnswerByIdRequest();
-        request.setId(21);
-
-        getAnswerById(request, ANSWER_NOT_EXIST);
-    }
-
-    // EP (answer id): invalid (25)
-    @Test
-    void getAnswerByIdTWENTYFIVE() {
-        GetAnswerByIdRequest request = new GetAnswerByIdRequest();
-        request.setId(25);
-
-        getAnswerById(request, ANSWER_NOT_EXIST);
-    }
-
-    @Test
-    void getAnswerById_ExceptionThrown() {
-        GetAnswerByIdRequest request = new GetAnswerByIdRequest();
-        request.setId(1);
-
-        // mock the event: db error -> findAnswerById() throws exception
-        when(answerRepository.findAnswerById(request.getId())).thenThrow(new RuntimeException("Test Exception"));
-
-        var response = answerService.getAnswerById(request);
-
-        assertEquals(EXCEPTION.getCode(), response.getCode());
-        assertEquals(EXCEPTION.getMessage(), response.getMessage());
-        assertNull(response.getData());
-    }
-
-    private final ResponseCommon<AddAnswerResponse> QUESTION_NOT_EXIST = new ResponseCommon<AddAnswerResponse>(ResponseCode.QUESTION_NOT_EXIST.getCode(), "Question not exist, cannot add answer to question", null);
-    private final ResponseCommon<AddAnswerResponse> ADD_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer fail", null);
 
     void addAnswer(AnswerData answerData, ResponseCommon<AddAnswerResponse> expectedResponse) {
 
@@ -297,152 +258,25 @@ class AnswerServiceImplTest extends Mockito {
         when(answerRepository.findAnswerById(answer.getId())).then(invocation -> {
             return Optional.of(answer);
         });
-        // call stack: answerService.addAnswer(answerData) -> userRepository.findUserById(id) -> users.get(id)
 
         var response = answerService.addAnswer(answerData);
 
 
         assertNotNull(response);
+
         assertEquals(expectedResponse.getCode(), response.getCode());
         assertEquals(expectedResponse.getMessage(), response.getMessage());
-//        assertEquals(expectedResponse.getData(), response.getData());
-        if (response.getData() != null && expectedResponse.getData() != null) {
-
-            AddAnswerResponse expectedData = expectedResponse.getData();
-            AddAnswerResponse actualData = response.getData();
-
-            assertEquals(expectedData.getId(), actualData.getId());
-            assertEquals(expectedData.getAnswerContent(), actualData.getAnswerContent());
-            assertEquals(expectedData.isCorrect(), actualData.isCorrect());
-            assertEquals(expectedData.getCreatedBy(), actualData.getCreatedBy());
-            assertEquals(expectedData.getUpdatedBy(), actualData.getUpdatedBy());
-        }
     }
 
     private ResponseCommon<AddAnswerResponse> expectedAddResponse(AnswerData answerData, User u) {
-
-        // create expected response
         AddAnswerResponse expectedAddResponse = new AddAnswerResponse();
         expectedAddResponse.setId(answerData.getQuestionID());
         expectedAddResponse.setAnswerContent(answerData.getAnswerName());
         expectedAddResponse.setCorrect(answerData.isCorrect());
         expectedAddResponse.setCreatedBy(u.getUsername());
         expectedAddResponse.setUpdatedBy(u.getUsername());
-
         return new ResponseCommon<AddAnswerResponse>(ResponseCode.SUCCESS.getCode(), "Add answer success", expectedAddResponse);
     }
-
-    // BVA (question): valid boundary (1)
-    @Test
-    void addAnswerONE() {
-        AnswerData answerData = new AnswerData();
-        answerData.setUsername("Test User 1");
-        answerData.setQuestionID(1);
-        answerData.setAnswerName("Test Answer 1");
-        answerData.setCorrect(true);
-
-        User u = users.get(0);
-        ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
-
-        addAnswer(answerData, expectedResponse);
-    }
-
-    // BVA (question id): invalid boundary (0)
-    @Test
-    void addAnswerQuestionIDZERO() {
-        AnswerData answerData = new AnswerData();
-        answerData.setUsername("Test User 1");
-        answerData.setQuestionID(0);
-        answerData.setAnswerName("Test Answer 1");
-        answerData.setCorrect(true);
-
-        addAnswer(answerData, QUESTION_NOT_EXIST);
-    }
-
-    // EP (question id): invalid (-5)
-    @Test
-    void addAnswerQuestionIDNEGATIVE() {
-        AnswerData answerData = new AnswerData();
-        answerData.setUsername("Test User 1");
-        answerData.setQuestionID(-5);
-        answerData.setAnswerName("Test Answer 1");
-        answerData.setCorrect(true);
-
-        addAnswer(answerData, QUESTION_NOT_EXIST);
-    }
-
-    // EP (question id): valid (3)
-    @Test
-    void addAnswerQuestionIDTHREE() {
-        AnswerData answerData = new AnswerData();
-        answerData.setUsername("Test User 1");
-        answerData.setQuestionID(3);
-        answerData.setAnswerName("Test Answer 1");
-        answerData.setCorrect(true);
-
-        User u = users.get(0);
-        ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
-
-        addAnswer(answerData, expectedResponse);
-    }
-
-    // BVA (question id): valid boundary (5)
-    @Test
-    void addAnswerQuestionIDFIVE() {
-        AnswerData answerData = new AnswerData();
-        answerData.setUsername("Test User 1");
-        answerData.setQuestionID(5);
-        answerData.setAnswerName("Test Answer 1");
-        answerData.setCorrect(true);
-
-        User u = users.get(0);
-        ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
-
-        addAnswer(answerData, expectedResponse);
-    }
-
-    // BVA (question id): invalid boundary (6)
-    @Test
-    void addAnswerQuestionIDSIX() {
-        AnswerData answerData = new AnswerData();
-        answerData.setUsername("Test User 1");
-        answerData.setQuestionID(6);
-        answerData.setAnswerName("Test Answer 1");
-        answerData.setCorrect(true);
-
-        addAnswer(answerData, QUESTION_NOT_EXIST);
-    }
-
-    // EP (question id): invalid (10)
-    @Test
-    void addAnswerQuestionIDTEN() {
-        AnswerData answerData = new AnswerData();
-        answerData.setUsername("Test User 1");
-        answerData.setQuestionID(10);
-        answerData.setAnswerName("Test Answer 1");
-        answerData.setCorrect(true);
-
-        addAnswer(answerData, QUESTION_NOT_EXIST);
-    }
-
-    @Test
-    void addAnswer_ExceptionThrown() {
-        AnswerData answerData = new AnswerData();
-        answerData.setUsername("Test User 1");
-        answerData.setQuestionID(1);
-        answerData.setAnswerName("Test Answer 1");
-        answerData.setCorrect(true);
-
-        // mock the event: db error -> findQuestionById() throws exception
-        when(questionRepository.findQuestionById(answerData.getQuestionID())).thenThrow(new RuntimeException("Test Exception"));
-
-        var response = answerService.addAnswer(answerData);
-
-        assertEquals(ADD_EXCEPTION.getCode(), response.getCode());
-        assertEquals(ADD_EXCEPTION.getMessage(), response.getMessage());
-        assertNull(response.getData());
-    }
-
 
     void updateAnswer(UpdateAnswerRequest request, ResponseCommon<UpdateAnswerResponse> expectedResponse) {
         when(answerRepository.findAnswerByQuestionIdAndId(request.getQuestionID(), request.getAnswerID())).then(invocation -> {
@@ -494,9 +328,6 @@ class AnswerServiceImplTest extends Mockito {
 
     }
 
-    private final ResponseCommon<UpdateAnswerResponse> ANSWER_NOT_EXIST_UPDATE = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist in question", null);
-
-
     private ResponseCommon<UpdateAnswerResponse> expectedUpdateResponse(Answer answer) {
         UpdateAnswerResponse expectedUpdateResponse = new UpdateAnswerResponse();
 
@@ -509,38 +340,6 @@ class AnswerServiceImplTest extends Mockito {
 
         return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Update answer success", expectedUpdateResponse);
     }
-
-    // BVA (answer): valid boundary (1)
-    @Test
-    void updateAnswerONE() {
-        UpdateAnswerRequest request = new UpdateAnswerRequest();
-        request.setUsername("Test User 1");
-        request.setQuestionID(1);
-        request.setAnswerID(1);
-        request.setAnswerContent("Test Answer 1");
-        request.setCorrect(true);
-
-        Answer answer = answers.get(0);
-        ResponseCommon<UpdateAnswerResponse> expectedResponse = expectedUpdateResponse(answer);
-        System.out.println("Expected: a" + answer.getId() + " q" + answer.getQuestionId());
-
-
-        updateAnswer(request, expectedResponse);
-    }
-
-    // BVA (answer): invalid boundary (0)
-    @Test
-    void updateAnswerZERO() {
-        UpdateAnswerRequest request = new UpdateAnswerRequest();
-        request.setUsername("Test User 1");
-        request.setQuestionID(1);
-        request.setAnswerID(0);
-        request.setAnswerContent("Test Answer 1");
-        request.setCorrect(true);
-
-        updateAnswer(request, ANSWER_NOT_EXIST_UPDATE);
-    }
-
 
     void deleteAnswer() {
     }
