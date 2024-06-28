@@ -45,3 +45,10 @@ getCourseById:
 
         # Invalid partition
         - 10 # Invalid boundary
+getUserByUsernames:
+    # test parameter
+    usernames:
+        # Invalid partition
+        - ""
+        - testuser1
+        - testuser3
