@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CourseServiceImplTest extends Mockito {
     // respones
-    private final ResponseCommon<GetCourseByIdResponse> COURSE_NOT_EXIST = new ResponseCommon<>(ResponseCode.COURSE_NOT_EXIST.getCode(), "Course not found", null);
+    private final ResponseCommon<GetCourseByIdResponse> COURSE_NOT_EXIST = new ResponseCommon<>(ResponseCode.COURSE_NOT_EXIST, null);
     // mock list to replace database
     private static ArrayList<Course> courses = new ArrayList<>();
     private static ArrayList<Category> categorys = new ArrayList<>();
@@ -65,7 +65,6 @@ class CourseServiceImplTest extends Mockito {
             courses = new ArrayList<Course>();
 
             List<Map<String, Object>> yamlCourse = (List<Map<String, Object>>) yamlData.get("course");
-
             for (Map<String, Object> c : yamlCourse) {
                 Course course = new Course();
                 course.setId((Integer) c.get("id"));
@@ -75,6 +74,7 @@ class CourseServiceImplTest extends Mockito {
                 course.setCategory(categorys.get((Integer) c.get("id")));
                 course.setLinkThumnail((String) c.get("link_image"));
                 // bo qua cot created_atcreated_by, updated_by
+                courses.add(course);
             }
 
 
@@ -83,38 +83,38 @@ class CourseServiceImplTest extends Mockito {
         }
     }
 
-    void addCourse(CourseData courseData, ResponseCommon<AddCourseResponse> expectedResponse) {
-        reset(courseRepository);
-        when(courseRepository.save(any(Course.class))).then(invocation -> {
-            Course course = invocation.getArgument(0);
-            course.setId(courses.size() + 1);
-            courses.add(course);
-            return course;
-        });
-        var response = courseService.addCourse(courseData);
-        verify(courseRepository, times(1)).save(any(Course.class));
-        assertNotNull(response);
-        assertEquals(expectedResponse.getCode(), response.getCode());
-        assertEquals(expectedResponse.getMessage(), response.getMessage());
-        // data: AddCourseResponse
-        if(response.getData() != null && expectedResponse.getData() != null){
-            AddCourseResponse expectedData = (AddCourseResponse) expectedResponse.getData();
-            AddCourseResponse actualData = (AddCourseResponse) response.getData();
-
-            assertEquals(expectedData.getCourseID(), actualData.getCourseID());
-            assertEquals(expectedData.getCourseName(), actualData.getCourseName());
-            assertEquals(expectedData.getDescription(), actualData.getDescription());
-            assertEquals(expectedData.getPrice(), actualData.getPrice());
-            assertEquals(expectedData.getCategory(), actualData.getCategory());
-            assertEquals(expectedData.getLinkThumail(), actualData.getLinkThumail());
-        }
-    };
+//    void addCourse(CourseData courseData, ResponseCommon<AddCourseResponse> expectedResponse) {
+//        reset(courseRepository);
+//        when(courseRepository.save(any(Course.class))).then(invocation -> {
+//            Course course = invocation.getArgument(0);
+//            course.setId(courses.size() + 1);
+//            courses.add(course);
+//            return course;
+//        });
+//        var response = courseService.addCourse(courseData);
+//        verify(courseRepository, times(1)).save(any(Course.class));
+//        assertNotNull(response);
+//        assertEquals(expectedResponse.getCode(), response.getCode());
+//        assertEquals(expectedResponse.getMessage(), response.getMessage());
+//        // data: AddCourseResponse
+//        if(response.getData() != null && expectedResponse.getData() != null){
+//            AddCourseResponse expectedData = (AddCourseResponse) expectedResponse.getData();
+//            AddCourseResponse actualData = (AddCourseResponse) response.getData();
+//
+//            assertEquals(expectedData.getCourseID(), actualData.getCourseID());
+//            assertEquals(expectedData.getCourseName(), actualData.getCourseName());
+//            assertEquals(expectedData.getDescription(), actualData.getDescription());
+//            assertEquals(expectedData.getPrice(), actualData.getPrice());
+//            assertEquals(expectedData.getCategory(), actualData.getCategory());
+//            assertEquals(expectedData.getLinkThumail(), actualData.getLinkThumail());
+//        }
+//    };
 
     void updateCourse(UpdateCourseRequest request, ResponseCommon<UpdateCourseResponse> expectedResponse) {
-        when(courseRepository.findCourseById(request.getCourseID())).then(innocation -> {
-            int courseiID = request.getCourseID();
+        when(courseRepository.findCourseById(request.getCourseID())).then(invocation -> {
+            int courseID = request.getCourseID();
             for(Course course : courses){
-                if(course.getId() == courseiID){
+                if(course.getId() == courseID){
                     return Optional.of(course);
                 }
             }
