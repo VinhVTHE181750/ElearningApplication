@@ -13,6 +13,7 @@ import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
 import team2.elearningapplication.dto.request.admin.answer.*;
 import team2.elearningapplication.dto.response.admin.answer.AddAnswerResponse;
+import team2.elearningapplication.dto.response.admin.answer.DeleteAnswerResponse;
 import team2.elearningapplication.dto.response.admin.answer.GetAnswerByIdResponse;
 import team2.elearningapplication.dto.response.admin.answer.UpdateAnswerResponse;
 import team2.elearningapplication.entity.Answer;
@@ -34,9 +35,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class AnswerServiceImplTest extends Mockito {
 
     // responses
-    private final ResponseCommon<GetAnswerByIdResponse> ANSWER_NOT_EXIST = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
+    private final ResponseCommon<GetAnswerByIdResponse> ANSWER_NOT_EXIST_GET = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
+    private final ResponseCommon<DeleteAnswerResponse> ANSWER_NOT_EXIST_DELETE = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist in question", null);
     private final ResponseCommon<GetAnswerByIdResponse> GET_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get answer fail", null);
-
+    private final ResponseCommon<DeleteAnswerResponse> DELETE_ANSWER_FAIL = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete answer fail", null);
     private final ResponseCommon<AddAnswerResponse> QUESTION_NOT_EXIST = new ResponseCommon<AddAnswerResponse>(ResponseCode.QUESTION_NOT_EXIST.getCode(), "Question not exist, cannot add answer to question", null);
     private final ResponseCommon<AddAnswerResponse> ADD_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer fail", null);
     private final ResponseCommon<UpdateAnswerResponse> ANSWER_NOT_EXIST_UPDATE = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist in question", null);
@@ -226,6 +228,67 @@ class AnswerServiceImplTest extends Mockito {
 
     }
 
+    void deleteAnswer(DeleteAnswerRequest request, ResponseCommon<DeleteAnswerResponse> expectedResponse) {
+
+        // call stack: answerService.getAnswerById(request) -> answerRepository.findAnswerById(id) -> answers.get(id)
+        final int answerID = request.getAnswerID();
+        final int questionID = request.getQuestionID();
+        final String username = request.getUsername();
+
+        reset(answerRepository);
+        reset(userRepository);
+
+        when(answerRepository.findAnswerByQuestionIdAndId(questionID, answerID)).then(invocation -> {
+            for (Answer answer : answers) {
+                if (answer.getQuestionId() == questionID && answer.getId() == answerID) {
+                    return Optional.of(answer);
+                }
+            }
+            return Optional.empty();
+        });
+
+        when(userRepository.findByUsername(username)).then(invocation -> {
+            for (User user : users) {
+                if (user.getUsername().equals(username)) {
+                    return Optional.of(user);
+                }
+            }
+            return Optional.empty();
+        });
+
+        var response = answerService.deleteAnswer(request);
+
+        // verify that the mocked findAnswerById method is called once
+        verify(answerRepository, times(1)).findAnswerByQuestionIdAndId(questionID, answerID);
+        verify(userRepository, times(1)).findByUsername(username);
+
+        // has response
+        assertNotNull(response);
+
+        // code
+        assertEquals(expectedResponse.getCode(), response.getCode());
+
+        // message
+        assertEquals(expectedResponse.getMessage(), response.getMessage());
+
+        // data: Answer
+        if (response.getData() != null && expectedResponse.getData() != null) {
+
+            DeleteAnswerResponse expectedData = expectedResponse.getData();
+            DeleteAnswerResponse actualData = response.getData();
+
+            assertEquals(expectedData.getAnswerID(), actualData.getAnswerID());
+            assertEquals(expectedData.getAnswerContent(), actualData.getAnswerContent());
+            assertEquals(expectedData.getQuestionID(), actualData.getQuestionID());
+            assertEquals(expectedData.isCorrect(), actualData.isCorrect());
+            assertEquals(expectedData.getCreatedBy(), actualData.getCreatedBy());
+            assertEquals(expectedData.getUpdatedBy(), actualData.getUpdatedBy());
+        }
+
+    }
+
+
+
     // generate expected response for getAnswerById()
     private ResponseCommon<GetAnswerByIdResponse> expectedGetResponse(Answer answer) {
         GetAnswerByIdResponse expectedGetResponse = new GetAnswerByIdResponse();
@@ -248,7 +311,7 @@ class AnswerServiceImplTest extends Mockito {
         GetAnswerByIdRequest request = new GetAnswerByIdRequest();
         request.setId(id);
         if (id < 1 || id > answers.size()) {
-            getAnswerById(request, ANSWER_NOT_EXIST);
+            getAnswerById(request, ANSWER_NOT_EXIST_GET);
         } else {
             Answer answer = answers.get(id - 1);
             ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
@@ -328,6 +391,20 @@ class AnswerServiceImplTest extends Mockito {
     // parameterized test method for updateAnswer()
 
     // parameterized test method for deleteAnswer()
+    @ParameterizedTest
+    @MethodSource("provideIDs")
+    void deleteAnswer(int id) {
+        DeleteAnswerRequest request = new DeleteAnswerRequest();
+        request.setAnswerID(id);
+
+        if (id < 1 || id > answers.size()) {
+            deleteAnswer(request, ANSWER_NOT_EXIST_DELETE);
+        } else {
+            Answer answer = answers.get(id - 1);
+            ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
+            deleteAnswer(request, DELETE_ANSWER_FAIL);
+        }
+    }
 
 
     void addAnswer(AnswerData answerData, ResponseCommon<AddAnswerResponse> expectedResponse) {
