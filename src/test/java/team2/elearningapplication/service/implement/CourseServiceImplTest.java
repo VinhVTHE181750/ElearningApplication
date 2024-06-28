@@ -13,10 +13,13 @@ import org.yaml.snakeyaml.Yaml;
 import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
 import team2.elearningapplication.dto.request.admin.course.GetCourseByIdRequest;
+import team2.elearningapplication.dto.request.admin.course.UpdateCourseRequest;
 import team2.elearningapplication.dto.response.admin.course.AddCourseResponse;
 import team2.elearningapplication.dto.response.admin.course.GetCourseByIdResponse;
+import team2.elearningapplication.dto.response.admin.course.UpdateCourseResponse;
 import team2.elearningapplication.entity.*;
 import team2.elearningapplication.repository.ICourseRepository;
+import team2.elearningapplication.repository.IUserRepository;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -39,6 +42,9 @@ class CourseServiceImplTest extends Mockito {
     CourseServiceImpl courseService;
     @Mock
     ICourseRepository courseRepository;
+    @Mock
+    IUserRepository userRepository;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -76,14 +82,82 @@ class CourseServiceImplTest extends Mockito {
             e.printStackTrace();
         }
     }
-    @Test
-    void addCourse() {
-    }
 
-    @Test
-    void updateCourse() {
-    }
+    void addCourse(CourseData courseData, ResponseCommon<AddCourseResponse> expectedResponse) {
+        reset(courseRepository);
+        when(courseRepository.save(any(Course.class))).then(invocation -> {
+            Course course = invocation.getArgument(0);
+            course.setId(courses.size() + 1);
+            courses.add(course);
+            return course;
+        });
+        var response = courseService.addCourse(courseData);
+        verify(courseRepository, times(1)).save(any(Course.class));
+        assertNotNull(response);
+        assertEquals(expectedResponse.getCode(), response.getCode());
+        assertEquals(expectedResponse.getMessage(), response.getMessage());
+        // data: AddCourseResponse
+        if(response.getData() != null && expectedResponse.getData() != null){
+            AddCourseResponse expectedData = (AddCourseResponse) expectedResponse.getData();
+            AddCourseResponse actualData = (AddCourseResponse) response.getData();
 
+            assertEquals(expectedData.getCourseID(), actualData.getCourseID());
+            assertEquals(expectedData.getCourseName(), actualData.getCourseName());
+            assertEquals(expectedData.getDescription(), actualData.getDescription());
+            assertEquals(expectedData.getPrice(), actualData.getPrice());
+            assertEquals(expectedData.getCategory(), actualData.getCategory());
+            assertEquals(expectedData.getLinkThumail(), actualData.getLinkThumail());
+        }
+    };
+
+    void updateCourse(UpdateCourseRequest request, ResponseCommon<UpdateCourseResponse> expectedResponse) {
+        when(courseRepository.findCourseById(request.getCourseID())).then(innocation -> {
+            int courseiID = request.getCourseID();
+            for(Course course : courses){
+                if(course.getId() == courseiID){
+                    return Optional.of(course);
+                }
+            }
+            return Optional.empty();
+        });
+
+        when(userRepository.findByUsername(request.getUsername())).then(invocation -> {
+            for(User user: users){
+                if(user.getUsername().equals(request.getUsername())){
+                    return Optional.of(user);
+                }
+            }
+            return Optional.empty();
+        });
+        var response = courseService.updateCourse(request);
+        verify(courseRepository, times(1)).findCourseById(request.getCourseID());
+        assertNotNull(response);
+        assertEquals(expectedResponse.getCode(), response.getCode());
+        assertEquals(expectedResponse.getMessage(), response.getMessage());
+        // data: UpdateCourseResponse
+        if(response.getData() != null && expectedResponse.getData() != null){
+            UpdateCourseResponse expectedData = (UpdateCourseResponse) expectedResponse.getData();
+            UpdateCourseResponse actualData = (UpdateCourseResponse) response.getData();
+
+            assertEquals(expectedData.getCourseID(), actualData.getCourseID());
+            assertEquals(expectedData.getCourseName(), actualData.getCourseName());
+            assertEquals(expectedData.getDescription(), actualData.getDescription());
+            assertEquals(expectedData.getPrice(), actualData.getPrice());
+            assertEquals(expectedData.getCategory(), actualData.getCategory());
+            assertEquals(expectedData.getLinkThumail(), actualData.getLinkThumail());
+        }
+    }
+    private ResponseCommon<UpdateCourseResponse> expectedUpdateResponse(Course course){
+        UpdateCourseResponse expectedResponse = new UpdateCourseResponse();
+
+        expectedResponse.setCourseID(course.getId());
+        expectedResponse.setCourseName(course.getName());
+        expectedResponse.setDescription(course.getDescription());
+        expectedResponse.setPrice(course.getPrice());
+        expectedResponse.setCategory(course.getCategory());
+        expectedResponse.setLinkThumail(course.getLinkThumnail());
+        return new ResponseCommon<>(expectedResponse);
+    }
     @Test
     void deleteCourse() {
     }
