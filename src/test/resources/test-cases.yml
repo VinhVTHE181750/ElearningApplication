@@ -1,0 +1,17 @@
+# test method
+# available: 1 -> 20
+getAnswerById:
+  # test parameter
+  id:
+    # Invalid partition
+    - -5
+    - 0
+    # Valid partition
+    - 1 # Valid boundary
+    - 2
+    - 5
+    - 19 # Valid boundary
+    - 20 # Valid boundary
+    # Invalid partition
+    - 21 # Invalid boundary
+    - 25

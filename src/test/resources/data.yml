@@ -1,57 +1,28 @@
+# chỉ cần điền các cột cần thiết
+
+
 questions:
   - id: 1
     questionContent: "Question 1"
-    deleted: false
   - id: 2
     questionContent: "Question 2"
-    deleted: false
   - id: 3
     questionContent: "Question 3"
-    deleted: false
   - id: 4
     questionContent: "Question 4"
-    deleted: false
   - id: 5
     questionContent: "Question 5"
-    deleted: false
 users:
   - id: 1
     username: "testuser1"
-    password: "testpassword1"
-    email: "testuser1@mail.com"
-    phone: "1234567890"
-    role: "ADMIN"
-    created_At: "2021-01-01T00:00:00"
-    full_name: "Test User 1"
-    gender: "MALE"
-    date_of_birth: "1990-01-01"
-    expired_otp: "2021-01-01T00:00:00"
-    status: "ACTIVE"
-    otp: "123456"
-    session_id: 1
-    updated_at: "2021-01-01T00:00:00"
   - id: 2
     username: "testuser2"
-    password: "testpassword2"
-    email: "testuser2@mail.com"
-    phone: "1234567890"
-    role: "STUDENT"
-    created_At: "2021-01-01T00:00:00"
-    full_name: "Test User 2"
-    gender: "FEMALE"
-    date_of_birth: "1990-01-01"
-    expired_otp: "2021-01-01T00:00:00"
-    status: "ACTIVE"
-    otp: "123456"
-    session_id: 2
-    updated_at: "2021-01-01T00:00:00"
 answers:
   - id: 1
     answerContent: "Answer 1 of Q1"
     deleted: false
     correct: false
     questionId: 1
-    updatedAt: "2021-01-01T00:00:00"
     createdBy: 1
     updatedBy: 1
   - id: 2
@@ -59,7 +30,6 @@ answers:
     deleted: false
     correct: false
     questionId: 1
-    updatedAt: "2021-01-01T00:00:00"
     createdBy: 1
     updatedBy: 1
   - id: 3
@@ -67,7 +37,6 @@ answers:
     deleted: false
     correct: false
     questionId: 1
-    updatedAt: "2021-01-01T00:00:00"
     createdBy: 1
     updatedBy: 1
   - id: 4
@@ -75,7 +44,6 @@ answers:
     deleted: false
     correct: true
     questionId: 1
-    updatedAt: "2021-01-01T00:00:00"
     createdBy: 1
     updatedBy: 1
   - id: 5
@@ -83,7 +51,6 @@ answers:
     deleted: false
     correct: false
     questionId: 2
-    updatedAt: "2021-01-01T00:00:00"
     createdBy: 1
     updatedBy: 1
   - id: 6
@@ -91,7 +58,6 @@ answers:
     deleted: false
     correct: false
     questionId: 2
-    updatedAt: "2021-01-01T00:00:00"
     createdBy: 1
     updatedBy: 1
   - id: 7
