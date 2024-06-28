@@ -61,8 +61,7 @@ class CourseServiceImplTest extends Mockito {
             List<Map<String, Object>> yamlCourse = (List<Map<String, Object>>) yamlData.get("course");
 
             for (Map<String, Object> c : yamlCourse) {
-                System.out.println(c);
-                Course  course = new Course();
+                Course course = new Course();
                 course.setId((Integer) c.get("id"));
                 course.setName((String) c.get("courseName"));
                 course.setDescription((String) c.get("description"));
@@ -123,7 +122,7 @@ class CourseServiceImplTest extends Mockito {
     }
 
     // generate expected response
-    private ResponseCommon<GetCourseByIdResponse> expectedGetRedponse(Course course){
+    private ResponseCommon<GetCourseByIdResponse> expectedGetResponse(Course course){
         GetCourseByIdResponse expectedResponse = new GetCourseByIdResponse();
 
         expectedResponse.setId(course.getId());
@@ -138,7 +137,7 @@ class CourseServiceImplTest extends Mockito {
     static Stream<Integer> provideIds() {
         Yaml yaml = new Yaml();
         List<Integer> listIDs = new ArrayList<>();
-        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("data.yml")) {
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("test-cases.yml")) {
             Map<String, Object> yamlData = yaml.load(in);
             Map<String, List<Integer>> yamlTestCases = (Map<String, List<Integer>>) yamlData.get("getCourseById");
             listIDs = yamlTestCases.get("id");
@@ -156,7 +155,7 @@ class CourseServiceImplTest extends Mockito {
             getCourseById(request, COURSE_NOT_EXIST);
         } else {
             Course course = courses.get(id - 1);
-            ResponseCommon<GetCourseByIdResponse> expectedResponse = expectedGetRedponse(course);
+            ResponseCommon<GetCourseByIdResponse> expectedResponse = expectedGetResponse(course);
             getCourseById(request, expectedResponse);
         }
     }

@@ -11,9 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.yaml.snakeyaml.Yaml;
 import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
-import team2.elearningapplication.dto.request.admin.answer.AnswerData;
-import team2.elearningapplication.dto.request.admin.answer.GetAnswerByIdRequest;
-import team2.elearningapplication.dto.request.admin.answer.UpdateAnswerRequest;
+import team2.elearningapplication.dto.request.admin.answer.*;
 import team2.elearningapplication.dto.response.admin.answer.AddAnswerResponse;
 import team2.elearningapplication.dto.response.admin.answer.GetAnswerByIdResponse;
 import team2.elearningapplication.dto.response.admin.answer.UpdateAnswerResponse;
@@ -35,10 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AnswerServiceImplTest extends Mockito {
 
-
     // responses
     private final ResponseCommon<GetAnswerByIdResponse> ANSWER_NOT_EXIST = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
-    private final ResponseCommon<GetAnswerByIdResponse> GET_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete answer fail", null);
+    private final ResponseCommon<GetAnswerByIdResponse> GET_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get answer fail", null);
 
     private final ResponseCommon<AddAnswerResponse> QUESTION_NOT_EXIST = new ResponseCommon<AddAnswerResponse>(ResponseCode.QUESTION_NOT_EXIST.getCode(), "Question not exist, cannot add answer to question", null);
     private final ResponseCommon<AddAnswerResponse> ADD_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer fail", null);
@@ -111,11 +108,77 @@ class AnswerServiceImplTest extends Mockito {
         }
     }
 
-    private Answer getAnswer(int id) {
-        return answers.get(id);
+    // provide test cases
+    static Stream<Integer> provideIDs() {
+        Yaml yaml = new Yaml();
+        List<Integer> listIDs = new ArrayList<>();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("test-cases.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            Map<String, List<Integer>> yamlTestCases = (Map<String, List<Integer>>) yamlData.get("getAnswerById");
+            listIDs = yamlTestCases.get("id");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listIDs.stream();
     }
 
-    // base test method
+    static Stream<Integer> provideQuestionIDs() {
+        Yaml yaml = new Yaml();
+        List<Integer> listQIDs = new ArrayList<>();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("test-cases.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            Map<String, List<Integer>> yamlTestCases = (Map<String, List<Integer>>) yamlData.get("addAnswer");
+            listQIDs = yamlTestCases.get("questionID");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listQIDs.stream();
+    }
+
+    static Stream<Boolean> provideCorrect() {
+        Yaml yaml = new Yaml();
+        List<Boolean> listCorrect = new ArrayList<>();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("test-cases.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            Map<String, List<Boolean>> yamlTestCases = (Map<String, List<Boolean>>) yamlData.get("addAnswer");
+            listCorrect = yamlTestCases.get("correct");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listCorrect.stream();
+    }
+
+    static Stream<String> provideAnswerName() {
+        Yaml yaml = new Yaml();
+        List<String> listAnswerName = new ArrayList<>();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("test-cases.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            Map<String, List<String>> yamlTestCases = (Map<String, List<String>>) yamlData.get("addAnswer");
+            listAnswerName = yamlTestCases.get("answerName");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listAnswerName.stream();
+    }
+
+    static Stream<String> provideUsername() {
+        Yaml yaml = new Yaml();
+        List<String> listUsername = new ArrayList<>();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("test-cases.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            Map<String, List<String>> yamlTestCases = (Map<String, List<String>>) yamlData.get("addAnswer");
+            listUsername = yamlTestCases.get("username");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listUsername.stream();
+    }
+
+
+
+
+
+    // base test method for getAnswerById()
     void getAnswerById(GetAnswerByIdRequest request, ResponseCommon<GetAnswerByIdResponse> expectedResponse) {
 
         // call stack: answerService.getAnswerById(request) -> answerRepository.findAnswerById(id) -> answers.get(id)
@@ -126,7 +189,7 @@ class AnswerServiceImplTest extends Mockito {
         when(answerRepository.findAnswerById(id)).then(invocation -> {
             if (id > 0 && id <= answers.size()) {
                 // db answer id start with 1, but array index start with 0, offsetting by 1
-                return Optional.of(getAnswer(id - 1));
+                return Optional.of(answers.get(id - 1));
             } else {
                 return Optional.empty();
             }
@@ -163,7 +226,7 @@ class AnswerServiceImplTest extends Mockito {
 
     }
 
-    // generate expected response
+    // generate expected response for getAnswerById()
     private ResponseCommon<GetAnswerByIdResponse> expectedGetResponse(Answer answer) {
         GetAnswerByIdResponse expectedGetResponse = new GetAnswerByIdResponse();
 
@@ -178,20 +241,7 @@ class AnswerServiceImplTest extends Mockito {
         return new ResponseCommon<>(expectedGetResponse);
     }
 
-    static Stream<Integer> provideIDs() {
-        Yaml yaml = new Yaml();
-        List<Integer> listIDs = new ArrayList<>();
-        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("test-cases.yml")) {
-            Map<String, Object> yamlData = yaml.load(in);
-            Map<String, List<Integer>> yamlTestCases = (Map<String, List<Integer>>) yamlData.get("getAnswerById");
-            listIDs = yamlTestCases.get("id");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return listIDs.stream();
-    }
-
-    // parameterized test method
+    // parameterized test method for getAnswerById()
     @ParameterizedTest
     @MethodSource("provideIDs")
     void getAnswerByID(int id) {
@@ -206,6 +256,80 @@ class AnswerServiceImplTest extends Mockito {
         }
     }
 
+    // parameterized test method for addAnswer() by questionID
+    @ParameterizedTest
+    @MethodSource("provideQuestionIDs")
+    void addAnswerParamQuestionID(int questionID) {
+        AnswerData answerData = new AnswerData();
+        answerData.setQuestionID(questionID);
+        answerData.setAnswerName(answers.get(0).getAnswerContent()  );
+        answerData.setCorrect(false);
+        answerData.setUsername(users.get(0).getUsername());
+
+        if (questionID < 1 || questionID > questions.size()) {
+            addAnswer(answerData, QUESTION_NOT_EXIST);
+        } else {
+            User u = users.get(0);
+            ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
+            addAnswer(answerData, expectedResponse);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideAnswerName")
+    void addAnswerParamAnswerName(String answerName) {
+        AnswerData answerData = new AnswerData();
+        answerData.setQuestionID(1);
+        answerData.setAnswerName(answerName);
+        answerData.setCorrect(false);
+        answerData.setUsername(users.get(0).getUsername());
+
+        if (answerName == null || answerName.isEmpty()) {
+            addAnswer(answerData, ADD_EXCEPTION);
+        } else {
+            User u = users.get(0);
+            ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
+            addAnswer(answerData, expectedResponse);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideCorrect")
+    void addAnswerParamCorrect(boolean correct) {
+        AnswerData answerData = new AnswerData();
+        answerData.setQuestionID(1);
+        answerData.setAnswerName(answers.get(0).getAnswerContent());
+        answerData.setCorrect(correct);
+        answerData.setUsername(users.get(0).getUsername());
+
+        User u = users.get(0);
+        ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
+        addAnswer(answerData, expectedResponse);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideUsername")
+    void addAnswerParamUsername(String username) {
+        AnswerData answerData = new AnswerData();
+        answerData.setQuestionID(1);
+        answerData.setAnswerName(answers.get(0).getAnswerContent());
+        answerData.setCorrect(false);
+        answerData.setUsername(username);
+
+        if (username == null || username.isEmpty()) {
+            addAnswer(answerData, ADD_EXCEPTION);
+        } else {
+            User u = users.get(0);
+            ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
+            addAnswer(answerData, expectedResponse);
+        }
+    }
+
+    // parameterized test method for updateAnswer()
+
+    // parameterized test method for deleteAnswer()
+
+
     void addAnswer(AnswerData answerData, ResponseCommon<AddAnswerResponse> expectedResponse) {
 
         // reset mocks
@@ -215,6 +339,10 @@ class AnswerServiceImplTest extends Mockito {
 
         // call stack: answerService.addAnswer(answerData) -> questionRepository.findQuestionById(id) -> questions.get(id)
         final int questionId = answerData.getQuestionID();
+        final String username = answerData.getUsername();
+        final String answerName = answerData.getAnswerName();
+        final boolean correct = answerData.isCorrect();
+
 
         when(questionRepository.findQuestionById(questionId)).then(invocation -> {
             if (questionId > 0 && questionId <= questions.size()) {
@@ -253,10 +381,6 @@ class AnswerServiceImplTest extends Mockito {
         when(answerRepository.save(answer)).then(invocation -> {
             answers.add(answer);
             return answer;
-        });
-
-        when(answerRepository.findAnswerById(answer.getId())).then(invocation -> {
-            return Optional.of(answer);
         });
 
         var response = answerService.addAnswer(answerData);
@@ -339,9 +463,6 @@ class AnswerServiceImplTest extends Mockito {
         expectedUpdateResponse.setUpdatedBy(answer.getUserUpdated().getUsername());
 
         return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Update answer success", expectedUpdateResponse);
-    }
-
-    void deleteAnswer() {
     }
 
 

@@ -15,6 +15,28 @@ getAnswerById:
     # Invalid partition
     - 21 # Invalid boundary
     - 25
+addAnswer:
+  # first item of each string parameters is taken as default value
+  questionID:
+    - -5
+    - 0
+    - 1
+    - 2
+    - 4
+    - 5
+    - 6
+    - 10
+  username:
+    - "testuser1"
+    - "testuser3"
+    - ""
+  answerName:
+    - "This is an example answer"
+    - ""
+    -
+  correct:
+    - true
+    - false
 deleteAnswerById:
   # test parameter
   id:
