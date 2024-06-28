@@ -30,3 +30,18 @@ deleteAnswerById:
     # Invalid partition
     - 21 # Invalid boundary
     - 25
+getCourseById:
+    # test parameter
+    id:
+        # Invalid partition
+        - -5
+        - 0
+        # Valid partition
+        - 1 # Valid boundary
+        - 2
+        - 4
+        - 5 # Valid boundary
+        - 6 # Valid boundary
+
+        # Invalid partition
+        - 10 # Invalid boundary

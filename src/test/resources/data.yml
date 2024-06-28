@@ -172,3 +172,51 @@ answers:
     updatedAt: "2021-01-01T00:00:00"
     createdBy: 1
     updatedBy: 1
+
+course:
+  - id: 1
+    courseName: "Course 1"
+    description: "Description of Course 1"
+    price: 100000
+    category: 1
+    link_image: "https://www.google.com"
+    createdBy: 1
+    createAt: 1
+
+  - id: 2
+    courseName: "Course 2"
+    description: "Description of Course 2"
+    price: 200000
+    category: 1
+    link_image: "https://www.google.com"
+    createdBy: 1
+    createAt: 1
+  - id: 3
+    courseName: "Course 3"
+    description: "Description of Course 3"
+    price: 300000
+    category: 1
+    link_image: "https://www.google.com"
+    createdBy: 1
+    createAt: 1
+  - id: 4
+    courseName: "Course 4"
+    description: "Description of Course 4"
+    price: 400000
+    category: 1
+    link_image: "https://www.google.com"
+    createdBy: 1
+    createAt: 1
+  - id: 5
+    courseName: "Course 5"
+    description: "Description of Course 5"
+    price: 500000
+    category: 1
+    link_image: "https://www.google.com"
+    createdBy: 1
+    createAt: 1
+
+category:
+  - id: 1
+    categoryName: "Category 1"
+
