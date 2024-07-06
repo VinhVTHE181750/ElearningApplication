@@ -71,6 +71,59 @@ getUserByUsernames:
     # test parameter
     usernames:
         # Invalid partition
-        - ""
-        - testuser1
-        - testuser3
+       #rule: 4-16 characters, only alpha numeric characters and underscore
+      - test #4
+      - vn1 #3
+      - vn123 #5
+      - vn12345678 #10
+      - vn123456789_1234 #16
+      - vn123456789_123 #15
+      - vn123456789_12345 #17
+      - vn #2
+      - vn12345678901234567890_ #21
+      - "" #empty
+      - vn1234@ #special characters
+      - vn1234 #not exist
+      -
+createUser:
+    # first item of each string parameters is taken as default value
+    username:
+      - tess #4
+      - en1 #3
+      - en123 #5
+      - en12345678 #10
+      - en123456789_1234 #16
+      - en123456789_123 #15
+      - en123456789_12345 #17
+      - en #2
+      - en12345678901234567890_ #21
+      - "" #empty
+      - en1234@ #special characters
+      - vn123 #exist
+      -
+    password:
+        #rule: at least 8 characters, at least 1 uppercase, 1 lowercase, 1 number
+        - "Vn123456" #valid
+        - "Vn12345" #7 characters
+        - "Vn1234567" #9 characters
+        - "Vn123" #5 characters
+        - "Vn1234567890" #12 characters
+        - "vn123456" #no uppercase
+        - "VN123456" #no lowercase
+        - "VNabcdef" #no number
+        - "" #empty
+        -
+#changePassword reuse the testcases from createUser
+    #reuse the test cases from createUser
+genUserFromEmail:
+    # test parameter
+    email:
+        # Invalid partition
+        - "test" #invalid email
+        - "test@" #invalid email
+        - "test@com" #invalid email
+        - "test@com." #invalid email
+        - "test@com.c" #invalid email
+        - "" #empty
+        - "minhpdhe181302@gmail.com" #valid email
+        -
