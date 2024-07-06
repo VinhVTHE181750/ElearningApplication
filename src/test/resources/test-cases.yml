@@ -1,4 +1,27 @@
 # test method
+hashPassword:
+  # passwords are provided by createUser()
+  hashes:
+    #rule: at least 8 characters, at least 1 uppercase, 1 lowercase, 1 number
+#    - "Vn123456" #valid
+    - "8b59f30cb41acb43fc11237ac591566a3608d4982c30cb6a551f70dcda62341e"
+#    - "Vn12345" #7 characters
+    - "EXCEPTION"
+#    - "Vn1234567" #9 characters
+    - "99b1d4665e2f348748718b19a492bce72fa0dac21ecd3469cc2e7ce110a8784d"
+#    - "Vn123" #5 characters
+    - "EXCEPTION"
+#    - "Vn1234567890" #12 characters
+    - "efc9b0f068921bd9e7080b78abc15dd290e31f6ec2d6dcc90ed18381f520945b"
+#    - "vn123456" #no uppercase
+    - "EXCEPTION"
+#    - "VN123456" #no lowercase
+    - "EXCEPTION"
+#    - "VNabcdef" #no number
+    - "EXCEPTION"
+#    - "" #empty
+    - "EXCEPTION"
+#
 # available answer ID: 1 -> 20
 getAnswerById:
   # test parameter
@@ -127,3 +150,4 @@ genUserFromEmail:
         - "" #empty
         - "minhpdhe181302@gmail.com" #valid email
         -
+hashes:
