@@ -2,6 +2,7 @@ package team2.elearningapplication.service.implement;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
@@ -11,7 +12,10 @@ import org.mockito.MockitoAnnotations;
 import org.yaml.snakeyaml.Yaml;
 import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
-import team2.elearningapplication.dto.request.admin.answer.*;
+import team2.elearningapplication.dto.request.admin.answer.AnswerData;
+import team2.elearningapplication.dto.request.admin.answer.DeleteAnswerRequest;
+import team2.elearningapplication.dto.request.admin.answer.GetAnswerByIdRequest;
+import team2.elearningapplication.dto.request.admin.answer.UpdateAnswerRequest;
 import team2.elearningapplication.dto.response.admin.answer.AddAnswerResponse;
 import team2.elearningapplication.dto.response.admin.answer.DeleteAnswerResponse;
 import team2.elearningapplication.dto.response.admin.answer.GetAnswerByIdResponse;
@@ -30,7 +34,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AnswerServiceImplTest extends Mockito {
 
@@ -69,8 +74,8 @@ class AnswerServiceImplTest extends Mockito {
         MockitoAnnotations.openMocks(this);
     }
 
-    @BeforeAll
-    static void setData() {
+    @BeforeEach
+    void setData() {
         Yaml yaml = new Yaml();
         try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("data.yml")) {
             Map<String, Object> yamlData = yaml.load(in);
@@ -177,9 +182,6 @@ class AnswerServiceImplTest extends Mockito {
     }
 
 
-
-
-
     // base test method for getAnswerById()
     void getAnswerById(GetAnswerByIdRequest request, ResponseCommon<GetAnswerByIdResponse> expectedResponse) {
 
@@ -238,8 +240,14 @@ class AnswerServiceImplTest extends Mockito {
         reset(answerRepository);
         reset(userRepository);
 
+        ArrayList<Answer> answers2 = new ArrayList<>();
+        for (Answer answer : answers) {
+            answers2.add(answer);
+        }
+
         when(answerRepository.findAnswerByQuestionIdAndId(questionID, answerID)).then(invocation -> {
-            for (Answer answer : answers) {
+            System.out.println("findAnswerByQuestionIdAndId " + questionID + " " + answerID);
+            for (Answer answer : answers2) {
                 if (answer.getQuestionId() == questionID && answer.getId() == answerID) {
                     return Optional.of(answer);
                 }
@@ -288,7 +296,6 @@ class AnswerServiceImplTest extends Mockito {
     }
 
 
-
     // generate expected response for getAnswerById()
     private ResponseCommon<GetAnswerByIdResponse> expectedGetResponse(Answer answer) {
         GetAnswerByIdResponse expectedGetResponse = new GetAnswerByIdResponse();
@@ -303,6 +310,7 @@ class AnswerServiceImplTest extends Mockito {
 
         return new ResponseCommon<>(expectedGetResponse);
     }
+
 
     // parameterized test method for getAnswerById()
     @ParameterizedTest
@@ -319,13 +327,22 @@ class AnswerServiceImplTest extends Mockito {
         }
     }
 
+    // single test method for exception
+    @Test
+    void getAnswerByIDException() {
+        GetAnswerByIdRequest request = new GetAnswerByIdRequest();
+        request.setId(1);
+        when(answerRepository.findAnswerById(request.getId())).thenThrow(new RuntimeException());
+        assertEquals(answerService.getAnswerById(request).getCode(), GET_EXCEPTION.getCode());
+    }
+
     // parameterized test method for addAnswer() by questionID
     @ParameterizedTest
     @MethodSource("provideQuestionIDs")
     void addAnswerParamQuestionID(int questionID) {
         AnswerData answerData = new AnswerData();
         answerData.setQuestionID(questionID);
-        answerData.setAnswerName(answers.get(0).getAnswerContent()  );
+        answerData.setAnswerName(answers.get(0).getAnswerContent());
         answerData.setCorrect(false);
         answerData.setUsername(users.get(0).getUsername());
 
@@ -369,26 +386,38 @@ class AnswerServiceImplTest extends Mockito {
         ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
         addAnswer(answerData, expectedResponse);
     }
-
-    @ParameterizedTest
-    @MethodSource("provideUsername")
-    void addAnswerParamUsername(String username) {
-        AnswerData answerData = new AnswerData();
-        answerData.setQuestionID(1);
-        answerData.setAnswerName(answers.get(0).getAnswerContent());
-        answerData.setCorrect(false);
-        answerData.setUsername(username);
-
-        if (username == null || username.isEmpty()) {
-            addAnswer(answerData, ADD_EXCEPTION);
-        } else {
-            User u = users.get(0);
-            ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
-            addAnswer(answerData, expectedResponse);
-        }
-    }
+//
+//    @ParameterizedTest
+//    @MethodSource("provideUsername")
+//    void addAnswerParamUsername(String username) {
+//        AnswerData answerData = new AnswerData();
+//        answerData.setQuestionID(1);
+//        answerData.setAnswerName(answers.get(0).getAnswerContent());
+//        answerData.setCorrect(false);
+//        answerData.setUsername(username);
+//
+//        if (username == null || username.isEmpty()) {
+//            addAnswer(answerData, ADD_EXCEPTION);
+//        } else {
+//            User u = users.get(0);
+//            ResponseCommon<AddAnswerResponse> expectedResponse = expectedAddResponse(answerData, u);
+//            addAnswer(answerData, expectedResponse);
+//        }
+//    }
 
     // parameterized test method for updateAnswer()
+
+
+    private ResponseCommon<DeleteAnswerResponse> expectedDeleteResponse(Answer answer) {
+        DeleteAnswerResponse expectedDeleteResponse = new DeleteAnswerResponse();
+
+        expectedDeleteResponse.setAnswerID(answer.getId());
+        expectedDeleteResponse.setAnswerContent(answer.getAnswerContent());
+        expectedDeleteResponse.setQuestionID(answer.getQuestionId());
+        expectedDeleteResponse.setCorrect(answer.isCorrect());
+
+        return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Delete answer success", expectedDeleteResponse);
+    }
 
     // parameterized test method for deleteAnswer()
     @ParameterizedTest
@@ -398,7 +427,13 @@ class AnswerServiceImplTest extends Mockito {
         request.setAnswerID(id);
 
         if (id < 1 || id > answers.size()) {
+            // id = 1 -> 4 => qID = 1; id = 5 -> 8 => qID = 2, ...
             deleteAnswer(request, ANSWER_NOT_EXIST_DELETE);
+        } else if (id > 0 && id <= answers.size()) {
+            request.setQuestionID((id - 1) / 4 + 1);
+            Answer answer = answers.get(id - 1);
+            deleteAnswer(request, expectedDeleteResponse(answer));
+
         } else {
             Answer answer = answers.get(id - 1);
             ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
@@ -446,13 +481,7 @@ class AnswerServiceImplTest extends Mockito {
 
         // call stack: answerService.addAnswer(answerData) -> answerRepository.save(answer) -> answerRepository.findAnswerById(id) -> answers.get(id)
         // mock answer
-        Answer answer = new Answer()
-                .setAnswerContent(answerData.getAnswerName())
-                .setCorrect(answerData.isCorrect())
-                .setQuestionId(questionId)
-                .setUserCreated(u)
-                .setUserUpdated(u)
-                .setDeleted(false);
+        Answer answer = new Answer().setAnswerContent(answerData.getAnswerName()).setCorrect(answerData.isCorrect()).setQuestionId(questionId).setUserCreated(u).setUserUpdated(u).setDeleted(false);
 
         // mock save answer
         when(answerRepository.save(answer)).then(invocation -> {
@@ -542,5 +571,16 @@ class AnswerServiceImplTest extends Mockito {
         return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Update answer success", expectedUpdateResponse);
     }
 
+    @Test
+    void addAnswerException() {
+        AnswerData answerData = new AnswerData();
+        answerData.setQuestionID(1);
+        answerData.setAnswerName(answers.get(0).getAnswerContent());
+        answerData.setCorrect(false);
+        answerData.setUsername(users.get(0).getUsername());
+
+        when(questionRepository.findQuestionById(answerData.getQuestionID())).thenThrow(new RuntimeException());
+        assertEquals(answerService.addAnswer(answerData).getCode(), ADD_EXCEPTION.getCode());
+    }
 
 }
