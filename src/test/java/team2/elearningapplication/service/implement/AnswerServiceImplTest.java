@@ -74,8 +74,8 @@ class AnswerServiceImplTest extends Mockito {
         MockitoAnnotations.openMocks(this);
     }
 
-    @BeforeAll
-    static void setData() {
+    @BeforeEach
+    void setData() {
         Yaml yaml = new Yaml();
         try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("data.yml")) {
             Map<String, Object> yamlData = yaml.load(in);
