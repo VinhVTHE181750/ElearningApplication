@@ -1,5 +1,6 @@
 package team2.elearningapplication.service.implement;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.yaml.snakeyaml.Yaml;
 import team2.elearningapplication.Enum.ResponseCode;
 import team2.elearningapplication.dto.common.ResponseCommon;
+import team2.elearningapplication.dto.request.user.authen.CreateUserRequest;
+import team2.elearningapplication.dto.request.user.authen.GetUserByEmailRequest;
 import team2.elearningapplication.dto.request.user.authen.GetUserByUsernameRequest;
 import team2.elearningapplication.dto.response.admin.answer.GetAnswerByIdResponse;
 import team2.elearningapplication.dto.response.user.authen.GetUserByUsernameResponse;
@@ -26,8 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +45,7 @@ class UserServiceImplTest extends Mockito{
 
     @Mock
     IUserRepository userRepository;
+
 
     @BeforeEach
     void setUp() {
@@ -95,6 +98,19 @@ class UserServiceImplTest extends Mockito{
         assertEquals(expectedResponse.getCode(), response.getCode());
         assertEquals(expectedResponse.getMessage(), response.getMessage());
     }
+    void genUserByEmail(String email) {
+
+        String response = userService.genUserFromEmail(email);
+        assertNotNull(response);
+        assertTrue(validateGenUserFromEmail(email, response));
+    }
+    private boolean validateGenUserFromEmail(String email, String response) {
+        String username = email.split("@")[0];
+        if (!response.startsWith(username)) return false;
+        if (response.length() != username.length() + 6) return false;
+        String lastSixChars = response.substring(response.length() - 6);
+        return lastSixChars.matches("\\d{6}");
+    }
 
     private ResponseCommon<GetUserByUsernameResponse> expectedGetResponse(User user) {
         GetUserByUsernameResponse expectedGetResponse = new GetUserByUsernameResponse();
@@ -137,14 +153,31 @@ class UserServiceImplTest extends Mockito{
 
 
     @Test
-    void createUser() {
+    void createUser(String username, String password) {
+        CreateUserRequest request = new CreateUserRequest();
+        
+
+
+    }
+    //data email save in test-cases.yml.genUserFromEmail.email
+    static Stream<String> provideEmails(){
+        Yaml yaml = new Yaml();
+        List<String> listEmails = new ArrayList<>();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("test-cases.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            Map<String, List<String>> yamlTestCases = (Map<String, List<String>>) yamlData.get("genUserFromEmail");
+            listEmails = yamlTestCases.get("email");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listEmails.stream();
     }
 
+
+    @ParameterizedTest
+    @MethodSource("provideEmails")
     @Test
-    void updateUser() {
-    }
-
-    void getUserByUsername() {
-
+    void genUserFromEmail(String email) {
+        genUserByEmail(email);
     }
 }
