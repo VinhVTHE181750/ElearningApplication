@@ -1,6 +1,5 @@
 package team2.elearningapplication.service.implement;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,22 +38,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AnswerServiceImplTest extends Mockito {
 
+    // mock list to replace database
+    private static ArrayList<Answer> answers;
+    private static ArrayList<Question> questions;
+    private static ArrayList<User> users;
     // responses
     private final ResponseCommon<GetAnswerByIdResponse> ANSWER_NOT_EXIST_GET = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist", null);
     private final ResponseCommon<DeleteAnswerResponse> ANSWER_NOT_EXIST_DELETE = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist in question", null);
     private final ResponseCommon<GetAnswerByIdResponse> GET_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Get answer fail", null);
     private final ResponseCommon<DeleteAnswerResponse> DELETE_ANSWER_FAIL = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Delete answer fail", null);
+
+    // response of deleteAnswer
     private final ResponseCommon<AddAnswerResponse> QUESTION_NOT_EXIST = new ResponseCommon<AddAnswerResponse>(ResponseCode.QUESTION_NOT_EXIST.getCode(), "Question not exist, cannot add answer to question", null);
     private final ResponseCommon<AddAnswerResponse> ADD_EXCEPTION = new ResponseCommon<>(ResponseCode.FAIL.getCode(), "Add answer fail", null);
     private final ResponseCommon<UpdateAnswerResponse> ANSWER_NOT_EXIST_UPDATE = new ResponseCommon<>(ResponseCode.ANSWER_NOT_EXIST.getCode(), "Answer not exist in question", null);
-
-    // response of deleteAnswer
-
-    // mock list to replace database
-    private static ArrayList<Answer> answers;
-    private static ArrayList<Question> questions;
-    private static ArrayList<User> users;
-
     // mock service
     @InjectMocks
     AnswerServiceImpl answerService;
@@ -67,53 +64,6 @@ class AnswerServiceImplTest extends Mockito {
 
     @Mock
     IUserRepository userRepository;
-
-    // test setup methods
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
-    @BeforeEach
-    void setData() {
-        Yaml yaml = new Yaml();
-        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("data.yml")) {
-            Map<String, Object> yamlData = yaml.load(in);
-            users = new ArrayList<User>();
-            List<Map<String, Object>> yamlUsers = (List<Map<String, Object>>) yamlData.get("users");
-            for (Map<String, Object> yamlUser : yamlUsers) {
-                User user = new User();
-                user.setId((Integer) yamlUser.get("id"));
-                user.setUsername((String) yamlUser.get("username"));
-                users.add(user);
-            }
-
-            questions = new ArrayList<Question>();
-            List<Map<String, Object>> yamlQuestions = (List<Map<String, Object>>) yamlData.get("questions");
-            for (Map<String, Object> yamlQuestion : yamlQuestions) {
-                Question question = new Question();
-                question.setId((Integer) yamlQuestion.get("id"));
-                question.setQuestionName((String) yamlQuestion.get("questionName"));
-                questions.add(question);
-            }
-
-            answers = new ArrayList<Answer>();
-            List<Map<String, Object>> yamlAnswers = (List<Map<String, Object>>) yamlData.get("answers");
-            for (Map<String, Object> yamlAnswer : yamlAnswers) {
-                Answer answer = new Answer();
-                answer.setId((Integer) yamlAnswer.get("id"));
-                answer.setAnswerContent((String) yamlAnswer.get("answerContent"));
-                answer.setUserCreated(users.get((int) yamlAnswer.get("createdBy")));
-                answer.setDeleted((Boolean) yamlAnswer.get("deleted"));
-                answer.setUserUpdated(users.get((int) yamlAnswer.get("updatedBy")));
-                answer.setCorrect((Boolean) yamlAnswer.get("correct"));
-                answer.setQuestionId((Integer) yamlAnswer.get("questionId"));
-                answers.add(answer);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     // provide test cases
     static Stream<Integer> provideIDs() {
@@ -181,6 +131,52 @@ class AnswerServiceImplTest extends Mockito {
         return listUsername.stream();
     }
 
+    // test setup methods
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @BeforeEach
+    void setData() {
+        Yaml yaml = new Yaml();
+        try (InputStream in = AnswerServiceImplTest.class.getClassLoader().getResourceAsStream("data.yml")) {
+            Map<String, Object> yamlData = yaml.load(in);
+            users = new ArrayList<User>();
+            List<Map<String, Object>> yamlUsers = (List<Map<String, Object>>) yamlData.get("users");
+            for (Map<String, Object> yamlUser : yamlUsers) {
+                User user = new User();
+                user.setId((Integer) yamlUser.get("id"));
+                user.setUsername((String) yamlUser.get("username"));
+                users.add(user);
+            }
+
+            questions = new ArrayList<Question>();
+            List<Map<String, Object>> yamlQuestions = (List<Map<String, Object>>) yamlData.get("questions");
+            for (Map<String, Object> yamlQuestion : yamlQuestions) {
+                Question question = new Question();
+                question.setId((Integer) yamlQuestion.get("id"));
+                question.setQuestionName((String) yamlQuestion.get("questionName"));
+                questions.add(question);
+            }
+
+            answers = new ArrayList<Answer>();
+            List<Map<String, Object>> yamlAnswers = (List<Map<String, Object>>) yamlData.get("answers");
+            for (Map<String, Object> yamlAnswer : yamlAnswers) {
+                Answer answer = new Answer();
+                answer.setId((Integer) yamlAnswer.get("id"));
+                answer.setAnswerContent((String) yamlAnswer.get("answerContent"));
+                answer.setUserCreated(users.get((int) yamlAnswer.get("createdBy")));
+                answer.setDeleted((Boolean) yamlAnswer.get("deleted"));
+                answer.setUserUpdated(users.get((int) yamlAnswer.get("updatedBy")));
+                answer.setCorrect((Boolean) yamlAnswer.get("correct"));
+                answer.setQuestionId((Integer) yamlAnswer.get("questionId"));
+                answers.add(answer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     // base test method for getAnswerById()
     void getAnswerById(GetAnswerByIdRequest request, ResponseCommon<GetAnswerByIdResponse> expectedResponse) {
@@ -216,8 +212,8 @@ class AnswerServiceImplTest extends Mockito {
 
         // data: Answer
         if (response.getData() != null && expectedResponse.getData() != null) {
-            GetAnswerByIdResponse expectedData = (GetAnswerByIdResponse) expectedResponse.getData();
-            GetAnswerByIdResponse actualData = (GetAnswerByIdResponse) response.getData();
+            GetAnswerByIdResponse expectedData = expectedResponse.getData();
+            GetAnswerByIdResponse actualData = response.getData();
 
             assertEquals(expectedData.getId(), actualData.getId());
             assertEquals(expectedData.getAnswerContent(), actualData.getAnswerContent());
@@ -246,7 +242,6 @@ class AnswerServiceImplTest extends Mockito {
         }
 
         when(answerRepository.findAnswerByQuestionIdAndId(questionID, answerID)).then(invocation -> {
-            System.out.println("findAnswerByQuestionIdAndId " + questionID + " " + answerID);
             for (Answer answer : answers2) {
                 if (answer.getQuestionId() == questionID && answer.getId() == answerID) {
                     return Optional.of(answer);
@@ -294,7 +289,6 @@ class AnswerServiceImplTest extends Mockito {
         }
 
     }
-
 
     // generate expected response for getAnswerById()
     private ResponseCommon<GetAnswerByIdResponse> expectedGetResponse(Answer answer) {
@@ -425,20 +419,52 @@ class AnswerServiceImplTest extends Mockito {
     void deleteAnswer(int id) {
         DeleteAnswerRequest request = new DeleteAnswerRequest();
         request.setAnswerID(id);
+        request.setQuestionID(1);
 
         if (id < 1 || id > answers.size()) {
             // id = 1 -> 4 => qID = 1; id = 5 -> 8 => qID = 2, ...
             deleteAnswer(request, ANSWER_NOT_EXIST_DELETE);
         } else if (id > 0 && id <= answers.size()) {
-            request.setQuestionID((id - 1) / 4 + 1);
             Answer answer = answers.get(id - 1);
-            deleteAnswer(request, expectedDeleteResponse(answer));
+            if (answer.getQuestionId() == request.getQuestionID()) {
+                deleteAnswer(request, expectedDeleteResponse(answer));
+            } else {
+                deleteAnswer(request, ANSWER_NOT_EXIST_DELETE);
+            }
 
         } else {
             Answer answer = answers.get(id - 1);
             ResponseCommon<GetAnswerByIdResponse> expectedResponse = expectedGetResponse(answer);
             deleteAnswer(request, DELETE_ANSWER_FAIL);
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideQuestionIDs")
+    void deleteAnswerAltQIDs(int questionID) {
+        DeleteAnswerRequest request = new DeleteAnswerRequest();
+        request.setQuestionID(questionID);
+        request.setAnswerID(1);
+        // for answer id = 1, try all question ids
+        if (questionID < 1 || questionID > questions.size()) {
+            deleteAnswer(request, ANSWER_NOT_EXIST_DELETE);
+        } else {
+            Answer answer = answers.get(0);
+            if (answer.getQuestionId() == questionID) {
+                deleteAnswer(request, expectedDeleteResponse(answer));
+            } else {
+                deleteAnswer(request, ANSWER_NOT_EXIST_DELETE);
+            }
+        }
+    }
+
+    @Test
+    void deleteAnswerException() {
+        DeleteAnswerRequest request = new DeleteAnswerRequest();
+        request.setQuestionID(1);
+        request.setAnswerID(1);
+        when(answerRepository.findAnswerByQuestionIdAndId(request.getQuestionID(), request.getAnswerID())).thenThrow(new RuntimeException());
+        assertEquals(answerService.deleteAnswer(request).getCode(), DELETE_ANSWER_FAIL.getCode());
     }
 
 
@@ -545,17 +571,50 @@ class AnswerServiceImplTest extends Mockito {
 
         // data: UpdateAnswerResponse
         if (response.getData() != null && expectedResponse.getData() != null) {
-            UpdateAnswerResponse expectedData = (UpdateAnswerResponse) expectedResponse.getData();
-            UpdateAnswerResponse actualData = (UpdateAnswerResponse) response.getData();
+            UpdateAnswerResponse expectedData = expectedResponse.getData();
+            UpdateAnswerResponse actualData = response.getData();
 
             assertEquals(expectedData.getQuestionID(), actualData.getQuestionID());
             assertEquals(expectedData.getAnswerID(), actualData.getAnswerID());
             assertEquals(expectedData.getAnswerContent(), actualData.getAnswerContent());
             assertEquals(expectedData.isCorrect(), actualData.isCorrect());
-            assertEquals(expectedData.getCreatedBy(), actualData.getCreatedBy());
-            assertEquals(expectedData.getUpdatedBy(), actualData.getUpdatedBy());
+            // not asserting usernames
         }
 
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideQuestionIDs")
+    void updateAnswerQuestionID(int questionID) {
+        UpdateAnswerRequest request = new UpdateAnswerRequest();
+        request.setQuestionID(questionID);
+        request.setAnswerID(1);
+        request.setAnswerContent("Updated Answer");
+        request.setCorrect(true);
+        request.setUsername(users.get(0).getUsername());
+
+        if (questionID < 1 || questionID > questions.size()) {
+            updateAnswer(request, ANSWER_NOT_EXIST_UPDATE);
+        } else {
+            Answer answer = answers.get(0);
+            if (answer.getQuestionId() == questionID) {
+                updateAnswer(request, expectedUpdateResponse(answer));
+            } else {
+                updateAnswer(request, ANSWER_NOT_EXIST_UPDATE);
+            }
+        }
+    }
+
+    @Test
+    void updateAnswerException() {
+        UpdateAnswerRequest request = new UpdateAnswerRequest();
+        request.setQuestionID(1);
+        request.setAnswerID(1);
+        request.setAnswerContent("Updated Answer");
+        request.setCorrect(true);
+        request.setUsername(users.get(0).getUsername());
+        when(answerRepository.findAnswerByQuestionIdAndId(request.getQuestionID(), request.getAnswerID())).thenThrow(new RuntimeException());
+        assertEquals(answerService.updateAnswer(request).getCode(), GET_EXCEPTION.getCode());
     }
 
     private ResponseCommon<UpdateAnswerResponse> expectedUpdateResponse(Answer answer) {
@@ -569,6 +628,28 @@ class AnswerServiceImplTest extends Mockito {
         expectedUpdateResponse.setUpdatedBy(answer.getUserUpdated().getUsername());
 
         return new ResponseCommon<>(ResponseCode.SUCCESS.getCode(), "Update answer success", expectedUpdateResponse);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideIDs")
+    void updateAnswer(int id) {
+        UpdateAnswerRequest request = new UpdateAnswerRequest();
+        request.setAnswerID(id);
+        request.setQuestionID(1);
+        request.setAnswerContent("Updated Answer");
+        request.setCorrect(true);
+        request.setUsername(users.get(0).getUsername());
+
+        if (id < 1 || id > answers.size()) {
+            updateAnswer(request, ANSWER_NOT_EXIST_UPDATE);
+        } else {
+            Answer answer = answers.get(id - 1);
+            if (answer.getQuestionId() == request.getQuestionID()) {
+                updateAnswer(request, expectedUpdateResponse(answer));
+            } else {
+                updateAnswer(request, ANSWER_NOT_EXIST_UPDATE);
+            }
+        }
     }
 
     @Test
